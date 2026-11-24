@@ -309,6 +309,6 @@ Listagem simples dos ficheiros presentes na pasta:
 7. Assets - Imagens, nuvens de palavras geradas, recursos utilizados, etc. 
 
 8. Reflexão Crítica e Aprendizagem 
-Desenvolve um pequeno texto refletivo sobre o projeto que inclua: 
-O que correu melhor durante o desenvolvimento. Qual foi a maior dificuldade. Como é 
-que a Inteligência Artificial mudou a tua forma de programar?
+Após realizar este trabalho sinto que a forma como programo mudou drasticamente. A inteligência Artificial tornou se numa ferramenta totalmente central e fulcral de todo o meu trabalho, nao só pela velocidade de trabalho mas devido á sua capacidade de detetear erros. Claro que é fundamental saber o qeu cada comando faz, cada ferramenta executa, no entanto a criacao do código em si é bastante mais facilitada com a inteligência artificial. Espero no futuro vir a realizar mais trabalhos como este, uma vez que, foi algo que me deu bastante prazer durante a realização.
+Obrigado.
+Francisco Vicente  
