@@ -3,6 +3,8 @@ Projeto Multimédia de Programacao com Inteligencia Artificial
 
 Nome da Aplicação / Dashboard Web: "Sala de Jogos"
 
+PARA PODER ABRIR O SITE, E JOGAR OS JOGOS SEM PROBLEMAS DEVE SER ABERTO CORRIDO O FICHEIRO: abrir_site.py
+
 Disciplina: Oficina de Multimédia - 12.º Ano - CRSI, turno 2
 
 Ano Letivo: 2026/2027   
