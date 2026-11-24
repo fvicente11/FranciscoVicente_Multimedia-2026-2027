@@ -1,0 +1,348 @@
+/* =====================================================================
+   estilo.css - TODO o CSS do jogo "Palavra Secreta"
+   Índice: 1 Variáveis | 2 Cores de cada tema | 3 Base | 4 Cabeçalho e rodapé
+           5 Cartões e botões | 6 Ecrã inicial | 7 Como jogar | 8 Layout do jogo e cenário
+           9 Grelha e letras | 10 Escrever e teclado | 11 Pistas e avisos
+           12 Ecrã final e estatísticas | 13 Animações | 14 Responsivo
+   ===================================================================== */
+
+/* ===== 1. VARIÁVEIS (muda aqui as cores e medidas do jogo todo) =====
+   As cores das letras (verde, amarelo, cinzento) são IGUAIS em todos os temas,
+   para o jogador nunca se confundir. Foram escolhidas com bom contraste:
+   texto branco no verde e no cinzento, texto escuro no amarelo. */
+:root {
+  --cartao: #ffffff;
+  --linha: #d6e4ee;          /* contornos */
+  --texto: #1d2b3a;          /* texto principal */
+  --suave: #566879;          /* texto secundário */
+  --certa: #1f7f3b;          /* verde: letra certa no sítio certo */
+  --existe: #f2c12e;         /* amarelo: a letra existe noutro sítio */
+  --existe-texto: #2b2200;
+  --falha: #6b7480;          /* cinzento: a letra não existe */
+  --vazia: #ffffff;
+  --vermelho: #c42b2b;
+  --azul: #1a6bc7;           /* contorno de foco */
+  --raio: 16px;
+  --sombra: 0 8px 24px rgba(29, 43, 58, .08);
+  --transicao: .2s ease;
+  color-scheme: light;
+
+  /* cores do tema (o tema "inicio" é o azul-céu do site; os outros estão na secção 2) */
+  --t-forte: #1a5fae;        /* títulos e botões (texto branco por cima) */
+  --t-forte-2: #144b8a;      /* botão com o rato por cima */
+  --t-claro: #e8f4ff;        /* fundo das caixas pequenas */
+  --t-borda: #b9d8f2;
+  --t-fundo: linear-gradient(160deg, #e3f4ff 0%, #f2fbf6 50%, #fff2e8 100%);
+}
+
+/* ===== 2. CORES DE CADA TEMA =====
+   O Python põe no <body> a classe do tema escolhido (por exemplo, "tema-animais").
+   Cada tema só muda as variáveis: o resto do CSS usa-as. */
+.tema-animais {            /* jardim zoológico: verdes e terra */
+  --t-forte: #2f6b1f; --t-forte-2: #24551a; --t-claro: #eef7e4; --t-borda: #c5e2ad;
+  --t-fundo: linear-gradient(160deg, #e3f3d3 0%, #f6f9e8 50%, #fbefd9 100%);
+}
+.tema-comida {             /* cozinha: laranjas e vermelhos quentes */
+  --t-forte: #b23c0c; --t-forte-2: #8f300a; --t-claro: #fff1e6; --t-borda: #ffd1b0;
+  --t-fundo: linear-gradient(160deg, #ffe8d4 0%, #fff6e3 55%, #ffe4e0 100%);
+}
+.tema-desporto {           /* estádio: verde relva e azul */
+  --t-forte: #17703a; --t-forte-2: #115a2e; --t-claro: #e7f6ea; --t-borda: #b8e2c1;
+  --t-fundo: linear-gradient(160deg, #dff4e2 0%, #eef8ff 55%, #dbeeff 100%);
+}
+.tema-paises {             /* volta ao mundo: azuis do céu e do mar */
+  --t-forte: #1b5ea6; --t-forte-2: #154b85; --t-claro: #e6f3ff; --t-borda: #b5d7f4;
+  --t-fundo: linear-gradient(160deg, #d8eeff 0%, #f1f9ff 55%, #e2f6ef 100%);
+}
+.tema-historia {           /* pergaminho: sépia e castanhos */
+  --t-forte: #7a4a1d; --t-forte-2: #603a16; --t-claro: #f8efdc; --t-borda: #e5cfa4;
+  --t-fundo: linear-gradient(160deg, #f5e7cb 0%, #fbf5e8 55%, #efe2c6 100%);
+}
+.tema-musica {             /* palco: roxos e cor-de-rosa */
+  --t-forte: #7a2e8f; --t-forte-2: #612472; --t-claro: #f6ecfa; --t-borda: #e1c4ec;
+  --t-fundo: linear-gradient(160deg, #f1e3fb 0%, #fdf2f8 55%, #ffe1ee 100%);
+}
+
+/* ===== 3. BASE ===== */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+  color: var(--texto);
+  line-height: 1.55;
+  background: var(--t-fundo);
+  background-color: #f3faff;
+}
+h1, h2, h3 { line-height: 1.2; margin: 0 0 .5rem; color: var(--t-forte); }
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.3rem; }
+h3 { font-size: 1rem; margin-top: 1rem; }
+p { margin: 0 0 .8rem; }
+a { color: var(--t-forte); }
+:focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
+/* texto só para leitores de ecrã (invisível, mas lido em voz alta) */
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.salto { position: absolute; left: -999px; top: 0; background: var(--existe); color: var(--texto); padding: .5rem 1rem; z-index: 10; }
+.salto:focus { left: 0; }
+.caixa { width: 100%; max-width: 1060px; margin: 0 auto; padding: 1.25rem 1rem 2rem; flex: 1; }
+
+/* ===== 4. CABEÇALHO E RODAPÉ ===== */
+.topo { background: rgba(255, 255, 255, .8); border-bottom: 1px solid var(--linha); backdrop-filter: blur(6px); }
+.topo-interior { max-width: 1060px; margin: 0 auto; padding: .7rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.marca { display: flex; align-items: center; gap: .6rem; font-weight: 800; font-size: 1.15rem; color: var(--texto); text-decoration: none; }
+.marca-letras { display: flex; gap: 3px; }
+.marca-letras span { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 6px; font-size: .95rem; color: #fff; }
+.marca-letras .certa { background: var(--certa); }
+.marca-letras .existe { background: var(--existe); color: var(--existe-texto); }
+nav { display: flex; gap: .3rem; }
+nav a { text-decoration: none; font-weight: 600; padding: .35rem .75rem; border-radius: 999px; transition: background var(--transicao); }
+nav a:hover { background: var(--t-claro); }
+.rodape { text-align: center; color: var(--suave); font-size: .85rem; padding: 1rem; }
+.rodape p { margin: 0; }
+
+/* ===== 5. CARTÕES E BOTÕES ===== */
+.cartao { background: var(--cartao); border: 1px solid var(--linha); border-radius: var(--raio); box-shadow: var(--sombra); padding: 1.25rem; margin-bottom: 1rem; }
+.botao {
+  display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+  background: var(--t-forte); color: #fff; border: 0; border-radius: 12px;
+  padding: .7rem 1.2rem; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, .18);
+  transition: background var(--transicao), transform var(--transicao);
+}
+.botao:hover { background: var(--t-forte-2); transform: translateY(-1px); }
+.botao:active { transform: translateY(1px); box-shadow: none; }
+.botao.secundario { background: #fff; color: var(--t-forte); border: 2px solid var(--t-forte); box-shadow: none; }
+.botao.secundario:hover { background: var(--t-claro); }
+.botao-texto { background: none; border: 0; color: var(--suave); font: inherit; font-size: .9rem; text-decoration: underline; cursor: pointer; padding: .3rem; }
+.botao-texto:hover { color: var(--vermelho); }
+
+/* ===== 6. ECRÃ INICIAL ===== */
+.hero { text-align: center; padding: 1.5rem 0 1rem; }
+.hero h1 { font-size: clamp(2rem, 6vw, 3rem); margin-top: .8rem; }
+.subtitulo { color: var(--suave); font-size: 1.05rem; }
+.logo { display: inline-flex; gap: 6px; }
+.logo .celula { width: clamp(36px, 9vw, 52px); font-size: clamp(1.2rem, 4vw, 1.7rem); animation: entrar .5s ease backwards; }
+.logo .celula:nth-child(2) { animation-delay: .08s; }
+.logo .celula:nth-child(3) { animation-delay: .16s; }
+.logo .celula:nth-child(4) { animation-delay: .24s; }
+.logo .celula:nth-child(5) { animation-delay: .32s; }
+.logo .celula:nth-child(6) { animation-delay: .40s; }
+.logo .celula:nth-child(7) { animation-delay: .48s; }
+
+.temas { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: .8rem; }
+.tema-cartao {
+  display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: .8rem;
+  align-items: center; text-align: left; font: inherit; color: var(--texto); cursor: pointer;
+  padding: .9rem 1rem; border-radius: 14px; border: 2px solid var(--borda-cartao, var(--linha));
+  background: var(--fundo-cartao, #fff);
+  transition: transform var(--transicao), box-shadow var(--transicao);
+}
+.tema-cartao:hover { transform: translateY(-3px); box-shadow: var(--sombra); }
+.tema-icone { grid-row: span 2; font-size: 2.2rem; line-height: 1; }
+.tema-nome { font-weight: 800; font-size: 1.1rem; color: var(--cor-cartao, var(--texto)); }
+.tema-desc { font-size: .88rem; color: var(--suave); }
+/* cada cartão já mostra as cores do seu tema */
+.cartao-animais { --fundo-cartao: #eef7e4; --borda-cartao: #c5e2ad; --cor-cartao: #2f6b1f; }
+.cartao-comida { --fundo-cartao: #fff1e6; --borda-cartao: #ffd1b0; --cor-cartao: #b23c0c; }
+.cartao-desporto { --fundo-cartao: #e7f6ea; --borda-cartao: #b8e2c1; --cor-cartao: #17703a; }
+.cartao-paises { --fundo-cartao: #e6f3ff; --borda-cartao: #b5d7f4; --cor-cartao: #1b5ea6; }
+.cartao-historia { --fundo-cartao: #f8efdc; --borda-cartao: #e5cfa4; --cor-cartao: #7a4a1d; }
+.cartao-musica { --fundo-cartao: #f6ecfa; --borda-cartao: #e1c4ec; --cor-cartao: #7a2e8f; }
+.cartao-surpresa { --fundo-cartao: #fff8dc; --borda-cartao: #f2d675; --cor-cartao: #8a5a00; border-style: dashed; }
+
+.continuar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; background: var(--t-claro); border-color: var(--t-borda); }
+.continuar h2 { margin: 0; }
+.continuar p { margin: 0; color: var(--suave); }
+.resumo, .numeros { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: .6rem; text-align: center; }
+.resumo div, .numeros div { background: var(--t-claro); border-radius: 12px; padding: .6rem .4rem; display: flex; flex-direction: column; }
+.resumo strong, .numeros strong { font-size: 1.5rem; color: var(--t-forte); line-height: 1.1; }
+.resumo span, .numeros span { font-size: .8rem; color: var(--suave); }
+.ligacao-ajuda { text-align: center; font-weight: 600; }
+
+/* ===== 7. COMO JOGAR ===== */
+.texto { max-width: 720px; margin-left: auto; margin-right: auto; }
+.regras { padding-left: 1.3rem; }
+.regras li { margin-bottom: .5rem; }
+.exemplo { display: flex; justify-content: center; margin: .5rem 0 1rem; }
+.exemplo .linha { width: min(100%, 300px); }
+.legenda { list-style: none; padding: 0; display: grid; gap: .5rem; }
+.legenda li { display: flex; align-items: center; gap: .6rem; }
+
+/* ===== 8. LAYOUT DO JOGO E CENÁRIO =====
+   Computador: duas colunas (cenário e pistas à esquerda, jogo à direita).
+   Telemóvel: uma coluna, com o cenário em faixa por cima (ver secção 14). */
+.jogo-layout { display: grid; grid-template-columns: minmax(250px, 340px) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
+.jogo-layout > * { min-width: 0; }   /* as colunas nunca ficam mais largas do que o ecrã */
+.lateral { position: sticky; top: 1rem; }
+.cenario { margin: 0 0 1rem; background: #fff; border: 1px solid var(--linha); border-radius: var(--raio); box-shadow: var(--sombra); overflow: hidden; }
+.cenario-svg { display: block; width: 100%; height: auto; aspect-ratio: 320 / 300; }
+.cenario figcaption { text-align: center; font-weight: 800; color: var(--t-forte); padding: .55rem; border-top: 1px solid var(--linha); background: var(--t-claro); }
+.cenario.perdeu .cenario-svg { filter: saturate(.55); }
+/* pequenas animações dentro do desenho */
+.fumo { animation: fumo 3s ease-in-out infinite; }
+.fumo:nth-of-type(2) { animation-delay: 1s; }
+.fumo:nth-of-type(3) { animation-delay: 2s; }
+.nota { animation: flutuar 3.5s ease-in-out infinite; }
+.nota:nth-of-type(2n) { animation-delay: 1.2s; }
+.voa { animation: voar 2.6s ease-in-out infinite; }
+.voa.v1 { animation-delay: .4s; } .voa.v2 { animation-delay: .9s; } .voa.v3 { animation-delay: 1.4s; }
+
+/* ===== 9. GRELHA E LETRAS ===== */
+.jogo { text-align: center; }
+#jogo, #pistas { scroll-margin-top: .5rem; }   /* depois de cada jogada, a página volta a este sítio */
+.info { list-style: none; padding: 0; margin: 0 0 1rem; display: flex; justify-content: center; flex-wrap: wrap; gap: .5rem; }
+.info li { background: var(--t-claro); border: 1px solid var(--t-borda); border-radius: 999px; padding: .25rem .8rem; font-size: .9rem; }
+.info strong { color: var(--t-forte); }
+.grelha { display: grid; gap: 6px; justify-content: center; margin: 0 auto 1rem; }
+/* cada linha tem tantas colunas como letras (--n vem do HTML) */
+.linha { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 6px; width: min(100%, calc(var(--n) * 62px)); margin: 0 auto; }
+.grelha .linha { width: min(80vw, calc(var(--n) * 60px)); }
+.grelha.pequena .linha { width: min(70vw, calc(var(--n) * 38px)); gap: 4px; }
+.grelha.pequena { gap: 4px; }
+.grelha.pequena .celula { font-size: 1rem; border-width: 1px; }
+
+.celula {
+  aspect-ratio: 1; display: grid; place-items: center; position: relative;
+  font-weight: 800; font-size: clamp(1.2rem, 4.5vw, 1.8rem); text-transform: uppercase;
+  border: 2px solid #c9d4de; border-radius: 8px; background: var(--vazia); color: var(--texto);
+  user-select: none;
+}
+.celula.mini { width: 30px; font-size: 1rem; flex: none; }
+.celula.mini::after { display: none; }
+.celula.escrita { border-color: #7d8a97; }
+.celula.certa { background: var(--certa); border-color: var(--certa); color: #fff; }
+.celula.existe { background: var(--existe); border-color: var(--existe); color: var(--existe-texto); }
+.celula.falha { background: var(--falha); border-color: var(--falha); color: #fff; }
+.celula.revelada { background: #fff; border-color: var(--t-forte); color: var(--t-forte); }
+/* marca pequena no canto: ajuda quem tem dificuldade em distinguir cores */
+.celula.certa::after, .celula.existe::after { position: absolute; top: 1px; right: 4px; font-size: .55em; line-height: 1; opacity: .85; }
+.celula.certa::after { content: "✓"; }
+.celula.existe::after { content: "•"; }
+.grelha.pequena .celula::after { display: none; }
+
+/* ===== 10. ESCREVER E TECLADO ===== */
+.enviar-escondido { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); border: 0; padding: 0; }
+.linha-escrever { display: flex; gap: .5rem; max-width: 420px; margin: 0 auto .9rem; }
+.linha-escrever input {
+  flex: 1; min-width: 0; font: inherit; font-size: 1.15rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
+  padding: .6rem .8rem; border: 2px solid var(--t-borda); border-radius: 12px; background: #fff; color: var(--texto);
+}
+.linha-escrever input::placeholder { letter-spacing: normal; text-transform: none; font-weight: 400; color: #7b8996; }
+.linha-escrever input:focus { border-color: var(--t-forte); outline: none; box-shadow: 0 0 0 3px var(--t-claro); }
+.teclado { display: grid; gap: 6px; max-width: 520px; margin: 0 auto; }
+.teclado-linha { display: flex; justify-content: center; gap: 5px; }
+.tecla {
+  flex: 1; max-width: 46px; min-width: 0; height: 52px; font: inherit; font-weight: 700; font-size: 1rem;
+  border: 0; border-radius: 8px; padding: 0; background: #dfe6ed; color: var(--texto); cursor: pointer;
+  transition: transform .1s ease, filter var(--transicao);
+}
+.tecla:hover { filter: brightness(.94); }
+.tecla:active { transform: scale(.94); }
+.tecla.larga { max-width: 72px; flex: 1.6; font-size: .85rem; background: #c9d4de; }
+.tecla.certa { background: var(--certa); color: #fff; }
+.tecla.existe { background: var(--existe); color: var(--existe-texto); }
+.tecla.falha { background: var(--falha); color: #fff; }
+.desistir { margin-top: 1rem; }
+
+/* ===== 11. PISTAS E AVISOS ===== */
+.pistas h2 { font-size: 1.1rem; }
+.lista-pistas { list-style: none; padding: 0; margin: 0 0 .8rem; display: grid; gap: .5rem; }
+.lista-pistas:empty { display: none; }
+.lista-pistas li { background: var(--t-claro); border-left: 4px solid var(--t-forte); border-radius: 8px; padding: .5rem .7rem; animation: entrar .4s ease; }
+.pista-numero { display: block; font-size: .75rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--t-forte); }
+.pista-botao { width: 100%; flex-wrap: wrap; }
+.pista-botao small { font-weight: 400; opacity: .9; }
+.pista-fim { color: var(--suave); margin: 0; }
+.aviso { background: #fff4f2; border: 1px solid #f3c2bb; color: #8f1f1f; border-radius: 12px; padding: .6rem .9rem; font-weight: 600; max-width: 460px; margin: 0 auto 1rem; }
+.aviso.info { background: var(--t-claro); border-color: var(--t-borda); color: var(--t-forte); }
+
+/* ===== 12. ECRÃ FINAL E ESTATÍSTICAS ===== */
+.resultado { text-align: center; }
+.resultado h1 { font-size: clamp(1.6rem, 5vw, 2.2rem); }
+.resultado.ganhou { border-top: 6px solid var(--certa); }
+.resultado.perdeu { border-top: 6px solid var(--falha); }
+.palavra-final { width: min(100%, calc(var(--n, 7) * 60px)); display: flex; justify-content: center; gap: 6px; margin: .6rem auto 1rem; }
+.palavra-final .celula { width: min(56px, 12vw); }
+.resultado.ganhou .palavra-final .celula { animation: saltar .6s ease calc(var(--i) * .1s + .2s) backwards; }
+.resultado.perdeu .palavra-final .celula { animation: entrar .5s ease calc(var(--i) * .1s) backwards; }
+.pontos { font-weight: 700; color: var(--suave); margin: 0; }
+.pontos span { font-size: 2rem; color: var(--certa); font-weight: 800; margin-right: .2rem; }
+.curiosidade { background: #fffbea; border-color: #f2dc8a; }
+.curiosidade h2 { color: #8a5a00; }
+.curiosidade p { font-size: 1.08rem; margin: 0; }
+.botoes-fim { display: flex; gap: .7rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.botoes-fim form { flex: 1 1 240px; display: flex; }
+.botoes-fim .botao { flex: 1 1 240px; }
+.as-tentativas summary { cursor: pointer; font-weight: 700; color: var(--t-forte); }
+.as-tentativas .grelha { margin-top: .8rem; margin-bottom: 0; }
+.barras { display: grid; gap: 4px; }
+.barra { display: flex; align-items: center; gap: .5rem; }
+.barra-num { width: 2.2rem; font-size: .85rem; color: var(--suave); text-align: right; }
+.barra-fundo { flex: 1; }
+.barra-valor { display: block; min-width: 1.8rem; background: #c9d4de; color: var(--texto); font-weight: 700; font-size: .85rem; text-align: right; padding: .1rem .45rem; border-radius: 6px; }
+.barra-valor.cheia { background: var(--certa); color: #fff; }
+.tabela-temas { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.tabela-temas th, .tabela-temas td { padding: .4rem .5rem; border-bottom: 1px solid var(--linha); text-align: center; }
+.tabela-temas th:first-child { text-align: left; }
+.tabela-temas thead th { color: var(--suave); font-weight: 600; }
+.nota { color: var(--suave); font-size: .82rem; margin: .8rem 0 0; }
+
+/* ===== 13. ANIMAÇÕES ===== */
+/* As letras "viram" uma a uma (--i = posição da letra). A cor só aparece a meio da volta:
+   até lá, o quadradinho ainda parece branco, como no Wordle. */
+.linha.nova .celula { animation: virar .6s ease calc(var(--i) * .25s) backwards; }
+@keyframes virar {
+  0%   { transform: rotateX(0); background: var(--vazia); border-color: #7d8a97; color: var(--texto); }
+  49%  { background: var(--vazia); border-color: #7d8a97; color: var(--texto); }
+  50%  { transform: rotateX(90deg); }
+  100% { transform: rotateX(0); }
+}
+/* quando acerta, as letras saltam depois de virarem */
+.linha.nova.ganhou .celula { animation: virar .6s ease calc(var(--i) * .25s) backwards, saltar .5s ease calc(var(--i) * .1s + var(--n) * .25s + .5s); }
+@keyframes saltar { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-14px); } 70% { transform: translateY(3px); } }
+/* a última letra escrita "salta" ligeiramente */
+.celula.pop { animation: pop .15s ease; }
+@keyframes pop { 50% { transform: scale(1.12); } }
+/* tamanho errado: a linha abana */
+.linha.abanar { animation: abanar .45s ease; }
+@keyframes abanar { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+@keyframes entrar { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes fumo { 0% { opacity: 0; transform: translateY(8px); } 40% { opacity: .85; } 100% { opacity: 0; transform: translateY(-14px); } }
+@keyframes flutuar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes voar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+/* quem prefere menos movimento (definição do sistema operativo) não vê animações */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ===== 14. RESPONSIVO ===== */
+@media (max-width: 860px) {
+  .jogo-layout { grid-template-columns: minmax(0, 1fr); gap: .8rem; }
+  .lateral { position: static; }
+  /* no telemóvel o cenário fica uma faixa baixa (o SVG é cortado ao centro, sem deformar) */
+  .cenario-svg { aspect-ratio: auto; height: 170px; }
+  .cenario { margin-bottom: .8rem; }
+  .coluna-fim .cartao { margin-bottom: .8rem; }
+}
+@media (max-width: 480px) {
+  .caixa { padding: .8rem .6rem 1.5rem; }
+  .cartao { padding: 1rem .8rem; }
+  h1 { font-size: 1.5rem; }
+  .topo-interior { padding: .5rem .8rem; }
+  .marca { font-size: 1rem; }
+  nav a { padding: .3rem .5rem; font-size: .9rem; }
+  .teclado-linha { gap: 4px; }
+  .tecla { height: 48px; font-size: .95rem; }
+  .tecla.larga { font-size: .75rem; }
+  .temas { grid-template-columns: 1fr; }
+  /* grelha mais pequena em ecrãs baixos, para a grelha e o teclado caberem juntos no ecrã */
+  .grelha .linha { width: min(84vw, calc(var(--n) * 60px), calc(var(--n) * (6.4vh + 6px))); gap: 5px; }
+  .grelha { gap: 5px; margin-bottom: .7rem; }
+  .info { gap: .3rem; margin-bottom: .6rem; }
+  .info li { font-size: .78rem; padding: .2rem .55rem; }
+  .linha-escrever { margin-bottom: .6rem; }
+  .linha-escrever input, .linha-escrever .botao { padding-top: .5rem; padding-bottom: .5rem; }
+}

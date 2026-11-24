@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Sala de Jogos: três jogos feitos só com Python, HTML e CSS.">
+  <title>Sala de Jogos</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎮%3C/text%3E%3C/svg%3E">
+  <!-- Folha de estilos (ficheiro site.css, na mesma pasta) -->
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <header class="hero caixa">
+    <div class="letras" aria-hidden="true"><span>J</span><span>O</span><span>G</span><span>O</span><span>S</span></div>
+    <h1>Sala de Jogos</h1>
+    <p class="subtitulo">Três jogos diferentes, feitos só com Python, HTML e CSS. Escolhe um e boa sorte!</p>
+  </header>
+
+  <main class="caixa">
+    <section class="jogos" aria-label="Os jogos">
+
+      <!-- ===== JOGO 1: Banco ou Falência ===== -->
+      <a class="jogo banco" href="http://127.0.0.1:8000/" target="_blank" rel="noopener">
+        <svg class="ilustracao" viewBox="0 0 320 170" aria-hidden="true">
+          <rect width="320" height="170" fill="#e6f6ea"/>
+          <circle cx="270" cy="38" r="20" fill="#ffd23f" stroke="#e0a800" stroke-width="2"/>
+          <path d="M0 140 Q80 128 160 136 T320 132 V170 H0 Z" fill="#9edb98"/>
+          <!-- gráfico a subir -->
+          <path d="M28 120 L70 96 L100 108 L140 70" fill="none" stroke="#12763a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M128 66 L144 66 L142 82" fill="none" stroke="#12763a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- mealheiro -->
+          <g stroke="#3b2f2a" stroke-width="2.5" stroke-linejoin="round">
+            <ellipse cx="220" cy="112" rx="58" ry="40" fill="#ff9fb2"/>
+            <path d="M270 104 q22 0 16 16 q-8 6 -16 0" fill="#ff9fb2"/>
+            <path d="M188 80 l-8 -20 l22 12 Z" fill="#ff9fb2"/>
+            <rect x="190" y="146" width="14" height="14" rx="4" fill="#ff8aa1"/>
+            <rect x="236" y="146" width="14" height="14" rx="4" fill="#ff8aa1"/>
+            <rect x="206" y="72" width="30" height="6" rx="3" fill="#3b2f2a"/>
+            <circle cx="262" cy="104" r="3" fill="#3b2f2a"/>
+            <circle cx="279" cy="112" r="2" fill="#3b2f2a"/>
+          </g>
+          <!-- moeda a cair -->
+          <g class="moeda"><circle cx="221" cy="56" r="12" fill="#ffd23f" stroke="#c98a00" stroke-width="2.5"/>
+            <text x="221" y="61" font-size="13" font-weight="800" text-anchor="middle" fill="#8a5a00">€</text></g>
+        </svg>
+        <div class="conteudo">
+          <span class="numero">Jogo 1 · Simulação de vida</span>
+          <h2>Banco ou Falência</h2>
+          <p>Vive uma vida inteira, dos 18 aos 65 anos, em 16 decisões. Estudar ou trabalhar? Poupar ou arriscar?
+             Cada escolha muda a tua personagem e a tua conta bancária. Chegas à reforma com liberdade financeira ou em falência?</p>
+          <ul class="etiquetas"><li>💰 Dinheiro</li><li>🎲 Decisões</li><li>⏱️ 10 min</li></ul>
+          <span class="jogar">Jogar ▶</span>
+        </div>
+      </a>
+
+      <!-- ===== JOGO 2: Palavra Secreta ===== -->
+      <a class="jogo palavra" href="http://127.0.0.1:8001/" target="_blank" rel="noopener">
+        <svg class="ilustracao" viewBox="0 0 320 170" aria-hidden="true">
+          <rect width="320" height="170" fill="#e8f4ff"/>
+          <g font-family="system-ui, sans-serif" font-weight="800" font-size="26" text-anchor="middle">
+            <g class="letra-vira"><rect x="28" y="30" width="48" height="48" rx="9" fill="#1f7f3b"/><text x="52" y="63" fill="#fff">P</text></g>
+            <g class="letra-vira l2"><rect x="82" y="30" width="48" height="48" rx="9" fill="#f2c12e"/><text x="106" y="63" fill="#2b2200">A</text></g>
+            <g class="letra-vira l3"><rect x="136" y="30" width="48" height="48" rx="9" fill="#6b7480"/><text x="160" y="63" fill="#fff">L</text></g>
+            <g class="letra-vira l4"><rect x="190" y="30" width="48" height="48" rx="9" fill="#1f7f3b"/><text x="214" y="63" fill="#fff">A</text></g>
+            <g class="letra-vira l5"><rect x="244" y="30" width="48" height="48" rx="9" fill="#f2c12e"/><text x="268" y="63" fill="#2b2200">V</text></g>
+            <g fill="#ffffff" stroke="#c9d4de" stroke-width="2">
+              <rect x="28" y="88" width="48" height="48" rx="9"/><rect x="82" y="88" width="48" height="48" rx="9"/>
+              <rect x="136" y="88" width="48" height="48" rx="9"/><rect x="190" y="88" width="48" height="48" rx="9"/>
+              <rect x="244" y="88" width="48" height="48" rx="9"/>
+            </g>
+          </g>
+          <text x="160" y="160" font-size="13" text-anchor="middle" fill="#1a5fae" font-weight="700">🦒 🍕 ⚽ 🌍 📜 🎸</text>
+        </svg>
+        <div class="conteudo">
+          <span class="numero">Jogo 2 · Palavras</span>
+          <h2>Palavra Secreta</h2>
+          <p>Um Wordle em português, por temas. Escolhe Animais, Comida, Desporto, Países, História ou Música e descobre a
+             palavra em 6 tentativas. As cores ajudam-te, há pistas e, no fim, aprendes uma curiosidade.</p>
+          <ul class="etiquetas"><li>🔤 Palavras</li><li>💡 Pistas</li><li>⏱️ 5 min</li></ul>
+          <span class="jogar">Jogar ▶</span>
+        </div>
+      </a>
+
+      <!-- ===== JOGO 3: Rota das Especiarias ===== -->
+      <a class="jogo rota" href="http://127.0.0.1:8002/" target="_blank" rel="noopener">
+        <svg class="ilustracao" viewBox="0 0 320 170" aria-hidden="true">
+          <rect width="320" height="170" fill="#e3f3f1"/>
+          <circle cx="262" cy="40" r="20" fill="#ffd23f" stroke="#e0a800" stroke-width="2"/>
+          <path d="M44 36 q8 -10 18 -4 q10 -8 18 2 q10 0 8 8 H40 q-4 -4 4 -6 Z" fill="#fff" stroke="#9fb7b5" stroke-width="1.5"/>
+          <rect y="118" width="320" height="52" fill="#2fa3a6"/>
+          <g class="ondas" fill="none" stroke="#ffffff" stroke-opacity=".7" stroke-width="2.5">
+            <path d="M10 134 q12 -7 24 0 t24 0"/><path d="M220 146 q12 -7 24 0 t24 0"/><path d="M120 156 q12 -7 24 0 t24 0"/>
+          </g>
+          <!-- caravela -->
+          <g class="navio" stroke="#3b2a1a" stroke-width="2.5" stroke-linejoin="round">
+            <path d="M100 118 L220 118 Q212 140 186 142 L134 142 Q108 140 100 118 Z" fill="#8b5a2b"/>
+            <path d="M150 118 V38 M188 118 V58" fill="none" stroke-width="3"/>
+            <path d="M122 50 Q150 44 178 50 L174 96 Q150 102 126 96 Z" fill="#f6ecd2"/>
+            <path d="M188 62 Q214 88 188 112 L170 112 Q188 88 188 62 Z" fill="#f6ecd2"/>
+            <path d="M146 62 h8 v9 h9 v8 h-9 v9 h-8 v-9 h-9 v-8 h9 Z" fill="#c0392b" stroke="none"/>
+            <path d="M150 38 l20 5 l-20 6 Z" fill="#c0392b"/>
+          </g>
+          <!-- rosa dos ventos -->
+          <g transform="translate(46 88)" stroke="#3b2a1a" stroke-width="1.5">
+            <circle r="18" fill="#f6e8c8"/><path d="M0 -24 L5 -4 L0 0 L-5 -4 Z" fill="#a4262c"/><path d="M0 24 L5 4 L0 0 L-5 4 Z" fill="#6b4a2a"/>
+          </g>
+        </svg>
+        <div class="conteudo">
+          <span class="numero">Jogo 3 · Comércio e exploração</span>
+          <h2>Rota das Especiarias</h2>
+          <p>Lisboa, 1515. O Rei dá-te uma caravela e 2 anos para fazeres fortuna. Negocia com 76 mercadores (cuidado com os
+             vigaristas!), navega até à Índia, foge dos piratas e volta a tempo de receber as honras do Rei.</p>
+          <ul class="etiquetas"><li>⛵ Viagens</li><li>🤝 Negociar</li><li>⏱️ 20 min</li></ul>
+          <span class="jogar">Jogar ▶</span>
+        </div>
+      </a>
+    </section>
+
+    <section class="sobre" aria-label="Como foi feito">
+      <div><span class="icone" aria-hidden="true">🐍</span><span><h3>Feitos em Python</h3><p>Toda a lógica dos jogos é Python puro, só com a biblioteca standard.</p></span></div>
+      <div><span class="icone" aria-hidden="true">🎨</span><span><h3>Desenhos em SVG</h3><p>As personagens, os cenários e os mapas são desenhados pelo próprio código.</p></span></div>
+      <div><span class="icone" aria-hidden="true">🚫</span><span><h3>Sem JavaScript</h3><p>Cada clique é um link ou um formulário que o Python recebe e responde.</p></span></div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <p class="aviso-jogos">⚠️ Os jogos só abrem se o site for aberto com o <strong>abrir_site.py</strong> (é ele que liga os jogos).
+       Se abrires o site.html diretamente, vês o site, mas os jogos ficam desligados.</p>
+    <p>Sala de Jogos · Projeto de Multimédia</p>
+  </footer>
+</body>
+</html>

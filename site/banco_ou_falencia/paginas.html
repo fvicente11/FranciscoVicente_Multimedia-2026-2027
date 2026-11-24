@@ -1,0 +1,296 @@
+<!--
+  paginas.html - TODO o HTML do jogo "Banco ou Falência" num só ficheiro.
+
+  COMO FUNCIONA
+  - O ficheiro está dividido em páginas. Cada página começa com um marcador
+    especial (arroba + nome da página, dentro de um comentário HTML).
+    É assim que o Python (banco_ou_falencia.py) as separa.
+  - Os campos escritos com cifrão (por exemplo, nome do jogador) são preenchidos
+    pelo Python com os dados do jogo.
+  - A página "base" é o esqueleto (cabeçalho e rodapé) e leva dentro, em cada
+    momento, uma das outras páginas.
+  - Durante o jogo (decisao, resultado e fim) a página tem DUAS colunas:
+    à esquerda a personagem, à direita o painel e as perguntas.
+
+  PÁGINAS DESTE FICHEIRO
+    base      esqueleto comum (cabeçalho, conteúdo, rodapé)
+    inicio    ecrã inicial com o formulário (nome, sexo e país)
+    painel    painel de estado, que aparece dentro de quase todas as páginas
+    personagem desenho da personagem (coluna da esquerda durante o jogo)
+    decisao   decisão da vida ou evento com escolha
+    resultado o que aconteceu depois da escolha
+    fim       ecrã final com o balanço, o gráfico e o resumo da vida
+
+  DICA: se alterares este ficheiro, basta carregares em F5 no browser
+  (não é preciso reiniciar o servidor).
+-->
+
+<!--@ base -->
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Banco ou Falência: simulação de vida dos 18 aos 65 anos. Consegues chegar à reforma com liberdade financeira?">
+  <meta name="theme-color" content="#eaf8ff">
+  <title>$titulo</title>
+  <!-- Ícone do separador do browser (um emoji desenhado em SVG, não precisa de ficheiro) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🏦%3C/text%3E%3C/svg%3E">
+  <!-- Folha de estilos (ficheiro estilo.css, na mesma pasta) -->
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+  <!-- Ligação para quem navega com teclado saltar o cabeçalho -->
+  <a class="salto" href="#conteudo">Saltar para o conteúdo</a>
+
+  <!-- ===== CABEÇALHO (igual em todas as páginas) ===== -->
+  <header class="topo">
+    <div class="topo-interior">
+      <span class="logo" aria-hidden="true">🏦</span>
+      <div>
+        <h1>Banco ou Falência</h1>
+        <p class="slogan">Dos 18 aos 65 anos: liberdade financeira ou reforma pobre?</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== CONTEÚDO (muda de página para página) ===== -->
+  <main class="caixa $classe_caixa" id="conteudo">
+$conteudo
+  </main>
+
+  <!-- ===== RODAPÉ ===== -->
+  <footer class="rodape">
+    <p>Minijogo &middot; Trabalho de Multimédia</p>
+    <p class="pequeno">Jogo educativo e fictício. Os valores não são aconselhamento financeiro.</p>
+  </footer>
+</body>
+</html>
+
+
+<!--@ inicio -->
+<!-- ===== ECRÃ INICIAL ===== -->
+<section class="hero">
+  <p class="etiqueta">Simulação de vida</p>
+  <h2>Herdaste <span class="destaque">100.000 &euro;</span>.</h2>
+  <p class="hero-texto">
+    Tens 18 anos e a vida inteira pela frente. Cada decisão pode dar-te dinheiro,
+    rendimento e anos de vida... ou deixar-te na falência. Aos 65 anos descobres como correu.
+  </p>
+</section>
+
+<!-- Três cartões a explicar a ideia do jogo -->
+<section class="funcionalidades" aria-label="Como funciona">
+  <article class="mini">
+    <span class="mini-icone" aria-hidden="true">🧭</span>
+    <h3>Decide</h3>
+    <p>16 decisões de vida, sorteadas entre mais de 40: estudar, investir, comprar casa...</p>
+  </article>
+  <article class="mini">
+    <span class="mini-icone" aria-hidden="true">🎲</span>
+    <h3>Arrisca</h3>
+    <p>Algumas opções são arriscadas e os eventos aleatórios podem mudar tudo.</p>
+  </article>
+  <article class="mini">
+    <span class="mini-icone" aria-hidden="true">🏁</span>
+    <h3>Reforma-te</h3>
+    <p>Aos 65 anos: liberdade financeira, reforma confortável, apertada ou pobre.</p>
+  </article>
+</section>
+
+<!-- Instruções que abrem e fecham sem JavaScript (elemento <details>) -->
+<details class="cartao ajuda">
+  <summary>Como jogar</summary>
+  <ol>
+    <li>Em cada turno passam 3 anos e tens de tomar uma decisão.</li>
+    <li>Cada opção mostra o que muda: dinheiro, rendimento por ano, despesas por ano e anos de vida.</li>
+    <li>As opções <span class="chip risco">arriscado</span> podem correr bem ou mal.</li>
+    <li>Entre turnos podem acontecer eventos aleatórios, bons ou maus (crises, heranças, burlas...).</li>
+    <li>Cada partida é diferente: as decisões e os eventos são sorteados entre dezenas de hipóteses.</li>
+    <li>Se ficares com dinheiro negativo durante 3 turnos seguidos, vais à falência.</li>
+    <li>Aos 65 anos o jogo compara o teu património com as despesas da reforma.</li>
+  </ol>
+</details>
+
+<!-- ===== FORMULÁRIO DA PERSONAGEM ===== -->
+<section class="cartao">
+  <h2>Cria a tua personagem</h2>
+  $erro
+  <form method="post" action="/comecar" class="formulario">
+
+    <label class="campo" for="nome">
+      <span>Nome</span>
+      <input id="nome" type="text" name="nome" maxlength="30" required autocomplete="off" placeholder="Como te chamas?">
+    </label>
+
+    <!-- Sexo: botões de opção estilizados como "pílulas" -->
+    <fieldset class="campo escolha">
+      <legend>Sexo</legend>
+      <div class="pilulas">
+        <input type="radio" id="sx-m" name="sexo" value="Masculino" checked><label for="sx-m">Masculino</label>
+        <input type="radio" id="sx-f" name="sexo" value="Feminino"><label for="sx-f">Feminino</label>
+        <input type="radio" id="sx-o" name="sexo" value="Outro"><label for="sx-o">Outro</label>
+      </div>
+    </fieldset>
+
+    <label class="campo" for="pais">
+      <span>País</span>
+      <!-- A datalist dá sugestões, mas o jogador pode escrever qualquer país -->
+      <input id="pais" type="text" name="pais" list="paises" maxlength="40" required autocomplete="off" placeholder="Em que país vives?">
+      <datalist id="paises">
+        <option value="Portugal"><option value="Espanha"><option value="França">
+        <option value="Brasil"><option value="Angola"><option value="Moçambique">
+        <option value="Cabo Verde"><option value="Reino Unido"><option value="Alemanha">
+        <option value="Estados Unidos">
+      </datalist>
+    </label>
+
+    <button class="botao" type="submit">Começar a vida &rarr;</button>
+  </form>
+</section>
+
+<!-- Os finais possíveis (só informação, para o jogador saber o que pode acontecer) -->
+<section class="cartao">
+  <h3>Os finais possíveis</h3>
+  <ul class="finais">
+    <li class="bom"><span aria-hidden="true">🏆</span><div><strong>Liberdade financeira</strong><p>O rendimento passivo paga sozinho todas as despesas.</p></div></li>
+    <li class="bom"><span aria-hidden="true">😊</span><div><strong>Reforma confortável</strong><p>A pensão e o rendimento passivo cobrem as despesas.</p></div></li>
+    <li class="medio"><span aria-hidden="true">😅</span><div><strong>Reforma apertada</strong><p>Tens de gastar o património, mas dá para chegar ao fim.</p></div></li>
+    <li class="mau"><span aria-hidden="true">😟</span><div><strong>Reforma pobre</strong><p>O dinheiro acaba antes de a vida acabar.</p></div></li>
+    <li class="mau"><span aria-hidden="true">🏚️</span><div><strong>Falência</strong><p>Dinheiro negativo durante demasiado tempo.</p></div></li>
+    <li class="mau"><span aria-hidden="true">💀</span><div><strong>Morte antes da reforma</strong><p>Os anos de vida acabaram antes dos 65.</p></div></li>
+  </ul>
+</section>
+
+
+<!--@ painel -->
+<!-- ===== PAINEL DE ESTADO (aparece em todas as páginas de jogo) ===== -->
+<section class="painel" aria-label="Estado do jogador">
+  <div class="painel-cabeca">
+    <div class="avatar" aria-hidden="true">$inicial</div>
+    <div class="quem">
+      <strong>$nome</strong>
+      <span>$sexo &middot; $pais</span>
+    </div>
+    <div class="turno">Turno <strong>$turno</strong>/$total_turnos</div>
+  </div>
+
+  <!-- Barra de progresso dos 18 aos 65 anos -->
+  <div class="progresso" role="progressbar" aria-label="Idade" aria-valuemin="18" aria-valuemax="65" aria-valuenow="$idade">
+    <div class="progresso-cheio" style="width:$progresso%"></div>
+  </div>
+  <ol class="fases" aria-label="Fases da vida">$fases</ol>
+
+  <ul class="stats">
+    <li class="stat"><span class="stat-icone" aria-hidden="true">🎂</span><span class="stat-nome">Idade</span><strong>$idade anos</strong></li>
+    <li class="stat"><span class="stat-icone" aria-hidden="true">💶</span><span class="stat-nome">Dinheiro</span><strong class="$classe_dinheiro">$dinheiro</strong></li>
+    <li class="stat"><span class="stat-icone" aria-hidden="true">📈</span><span class="stat-nome">Rendimento/ano</span><strong>$rendimento</strong></li>
+    <li class="stat"><span class="stat-icone" aria-hidden="true">🧾</span><span class="stat-nome">Despesas/ano</span><strong>$despesas</strong></li>
+    <li class="stat"><span class="stat-icone" aria-hidden="true">⚖️</span><span class="stat-nome">Saldo anual</span><strong class="$classe_saldo">$saldo</strong></li>
+    <li class="stat"><span class="stat-icone" aria-hidden="true">❤️</span><span class="stat-nome">Esperança de vida</span><strong>$esperanca anos</strong></li>
+  </ul>
+</section>
+
+
+<!--@ personagem -->
+<!-- ===== PERSONAGEM (coluna da esquerda) =====
+     O desenho ($svg) é feito pelo Python, na secção "5b. PERSONAGEM".
+     A classe nivel-1 ... nivel-5 muda a cor da legenda. -->
+<aside class="personagem-coluna" aria-label="A tua personagem">
+  <figure class="personagem nivel-$nivel">
+    $svg
+    <figcaption>
+      <span class="nivel-etiqueta">$icone Nível: $nome_nivel</span>
+      <span class="nivel-frase">$frase</span>
+    </figcaption>
+  </figure>
+</aside>
+
+
+<!--@ decisao -->
+<!-- ===== DECISÃO OU EVENTO COM ESCOLHA ===== -->
+<div class="jogo-layout">
+$personagem
+<div class="jogo-conteudo">
+$painel
+<section class="cartao situacao $tipo">
+  <p class="etiqueta">$etiqueta</p>
+  <h2>$titulo</h2>
+  <p class="descricao">$descricao</p>
+
+  <!-- Legenda das etiquetas coloridas -->
+  <p class="legenda-chips">
+    <span class="chip bom">bom</span>
+    <span class="chip mau">mau</span>
+    <span class="chip risco">arriscado</span>
+    o que muda ao escolher
+  </p>
+
+  <!-- Cada botão envia o número da opção escolhida -->
+  <form method="post" action="/escolher" class="opcoes">
+$botoes
+  </form>
+</section>
+</div>
+</div>
+
+
+<!--@ resultado -->
+<!-- ===== O QUE ACONTECEU DEPOIS DA ESCOLHA ===== -->
+<div class="jogo-layout">
+$personagem
+<div class="jogo-conteudo">
+$painel
+<section class="cartao">
+  <p class="etiqueta">Resultado</p>
+  <h2>O que aconteceu</h2>
+  <ul class="linha-tempo">$mensagens</ul>
+  <form method="post" action="/continuar">
+    <button class="botao" type="submit">Continuar &rarr;</button>
+  </form>
+</section>
+</div>
+</div>
+
+
+<!--@ fim -->
+<!-- ===== ECRÃ FINAL ===== -->
+<div class="jogo-layout">
+$personagem
+<div class="jogo-conteudo">
+$painel
+
+<!-- Faixa principal com o resultado (a cor muda consoante o final) -->
+<section class="final $classe_final">
+  <div class="final-icone" aria-hidden="true">$icone</div>
+  <p class="etiqueta">Fim do jogo</p>
+  <h2>$titulo_final</h2>
+  <p class="final-texto">$explicacao</p>
+  <!-- Dica para a próxima partida (muda consoante o final) -->
+  <p class="dica"><strong>Dica para a próxima vez:</strong> $dica</p>
+</section>
+
+<!-- Números do balanço final -->
+<section class="cartao">
+  <h3>Balanço final</h3>
+  <div class="cartoes-final">$detalhes</div>
+</section>
+
+<!-- Gráfico de barras feito só com HTML e CSS -->
+<section class="cartao">
+  <h3>Evolução do dinheiro</h3>
+  <p class="nota">Cada barra é um turno. Verde = dinheiro positivo, vermelho = dívida.</p>
+  <div class="grafico">$grafico</div>
+</section>
+
+<!-- Resumo da vida -->
+<section class="cartao">
+  <h3>As decisões e eventos da tua vida</h3>
+  <ol class="linha-tempo">$historico</ol>
+</section>
+
+<form method="post" action="/reiniciar">
+  <button class="botao" type="submit">Jogar outra vez</button>
+</form>
+</div>
+</div>

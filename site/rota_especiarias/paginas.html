@@ -1,0 +1,495 @@
+<!--
+  paginas.html - TODO o HTML do jogo "Rota das Especiarias" num só ficheiro.
+
+  COMO FUNCIONA
+  - O ficheiro está dividido em BLOCOS. Cada bloco começa com um marcador (arroba + nome do
+    bloco, dentro de um comentário HTML). É assim que o Python (rota_especiarias.py) os separa.
+  - Os campos com cifrão são preenchidos pelo Python com os dados do jogo.
+  - Não há JavaScript: os desenhos clicáveis são links e os botões são formulários.
+
+  ECRÃS                                    PEÇAS PEQUENAS
+    base          esqueleto                  painel, carga_item, carga_vazia, encomendas, encomenda_item
+    inicio        ecrã inicial               diario_item, mensagem, chip_mercador, chip_zangado, chip_encomenda
+    como_jogar    regras                     reparar, reparar_ok, botao_rei
+    carta         carta do Rei               conversa_negocio, conversa_fechada, linha_produto, acoes_vender,
+    porto         cena do porto                acoes_comprar, sem_produto, sem_compra, etiqueta_*, botao_examinar,
+    conversa      negociar com um mercador     contraproposta, encomenda_conversa, botao_entregar, falta_encomenda, fala_extra
+    mapa          escolher o destino         mapa_info, mapa_info_vazio, aviso_mapa
+    viagem        no mar (eventos)           evento, escolha_evento, resultado_viagem
+    rei_confirmar ir ao Paço Real            medalha, aviso_fim
+    fim           cerimónia no palácio
+    derrota       fim antes do tempo
+
+  A MOLDURA E A MÚSICA
+    moldura       a página que nunca muda: tem a música de fundo e o jogo lá dentro (num iframe),
+                  para a música não recomeçar sempre que o jogo muda de página
+    barra_musica  o leitor da música (a música é composta pelo Python: endereço /musica.wav)
+
+  DICA: se alterares este ficheiro, basta carregares em F5 no browser.
+-->
+
+<!--@ moldura -->
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>$titulo</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E⛵%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body class="moldura">
+  <!-- O jogo inteiro corre aqui dentro; os cliques mudam só esta "janela" -->
+  <iframe class="janela-jogo" src="/jogo" title="Rota das Especiarias"></iframe>
+  $barra
+</body>
+</html>
+
+<!--@ barra_musica -->
+<div class="musica" role="region" aria-label="Música de fundo">
+  <span class="musica-titulo">🎵 Música de fundo</span>
+  <audio controls loop preload="none" src="$fonte">O teu browser não consegue tocar a música.</audio>
+</div>
+
+<!--@ base -->
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Rota das Especiarias: um jogo de comércio e exploração nos Descobrimentos, em 1515.">
+  <meta name="theme-color" content="#2b6f7a">
+  <title>$titulo</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E⛵%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body class="$classe">
+  <a class="salto" href="#conteudo">Saltar para o conteúdo</a>
+  <header class="topo">
+    <a class="marca" href="/jogo"><span aria-hidden="true">⛵</span> Rota das Especiarias</a>
+    <nav aria-label="Menu"><a href="/como-jogar">Como jogar</a></nav>
+  </header>
+  <main id="conteudo" class="principal">
+$conteudo
+  </main>
+  <footer class="rodape">Rota das Especiarias · Projeto de Multimédia · feito só com Python, HTML e CSS</footer>
+</body>
+</html>
+
+<!--@ inicio -->
+<section class="hero">
+  <div class="hero-cena">$cena</div>
+  <div class="hero-texto pergaminho">
+    <p class="ano">Lisboa, anno Domini 1515</p>
+    <h1>Rota das Especiarias</h1>
+    <p>O Rei D. Manuel I procura um mercador corajoso para correr os portos do mundo: da Flandres às Ilhas das Especiarias.
+       Compra barato, vende caro, faz amigos e foge dos piratas. Tens <strong>2 anos</strong> para voltar a Lisboa.</p>
+    <form method="post" action="/comecar" class="form-nome">
+      <label for="nome">Como te chamas, mercador?</label>
+      <div class="linha-form">
+        <input id="nome" name="nome" maxlength="24" placeholder="O teu nome" autocomplete="off" required>
+        <button type="submit" class="botao">Receber a carta do Rei</button>
+      </div>
+    </form>
+    <p class="pequeno"><a href="/como-jogar">Como se joga?</a></p>
+  </div>
+</section>
+
+<!--@ como_jogar -->
+<article class="pergaminho texto-longo">
+  <h1>Como jogar</h1>
+  <h2>👑 O objetivo</h2>
+  <p>O Rei dá-te uma caravela e <strong>2 anos</strong> (até março de 1517). Corre os portos, compra barato e vende caro,
+     e volta a <strong>Lisboa</strong> antes do fim do prazo para receberes uma honra do Rei.</p>
+  <h2>🏙️ Nos portos</h2>
+  <ul>
+    <li><strong>Clica nos mercadores</strong> desenhados no cais para falares com eles.</li>
+    <li><strong>Clica no teu navio</strong> para abrires o mapa e partires.</li>
+    <li>Em Lisboa, <strong>clica no Paço Real</strong> para te apresentares ao Rei quando quiseres terminar.</li>
+    <li>No estaleiro podes <strong>reparar o navio</strong>. Um navio estragado pode afundar!</li>
+  </ul>
+  <h2>🤝 Negociar</h2>
+  <ul>
+    <li>Cada mercador procura certos produtos (⭐) e vende outros. Os preços mudam de porto para porto:
+        as especiarias são baratas na Índia e caríssimas na Europa; o ouro vem de África...</li>
+    <li>Podes aceitar o preço dele ou <strong>regatear</strong> (+15% ou +40%). Ele pode aceitar, fazer uma contraproposta ou recusar.</li>
+    <li>Cada mercador tem uma <strong>personalidade</strong> (honesto, generoso, teimoso, desconfiado, fala-barato... ou vigarista!)
+        e uma <strong>paciência</strong> (⏳). Se regateares demais, manda-te embora.</li>
+    <li>Cuidado com os <strong>vigaristas</strong>: podem vender-te mercadoria falsa. Desconfia dos preços bons demais
+        e usa o botão <strong>Examinar</strong> (gasta 1 dia).</li>
+    <li>Negócios justos dão <strong>amizade</strong> (❤️). A partir de $amigo de amizade, o mercador é teu amigo:
+        faz descontos, conta segredos (até portos escondidos!) e pede-te encomendas que paga a dobrar.</li>
+  </ul>
+  <h2>🧭 Viajar</h2>
+  <ul>
+    <li>No mapa, clica num porto para veres quantos dias demora a viagem. Viagens longas gastam muito tempo.</li>
+    <li>O porão leva no máximo <strong>$capacidade caixas</strong>.</li>
+    <li>No mar acontecem coisas: tempestades, piratas, ilhas desconhecidas, golfinhos... e às vezes tens de escolher o que fazer.</li>
+    <li>Se o navio afundar, os teus <strong>amigos</strong> podem salvar-te. Quantos mais amigos, maior a hipótese!</li>
+  </ul>
+  <h2>🏅 As honras do Rei</h2>
+  <p>No fim, o Rei dá-te medalhas de <strong>Fortuna</strong>, <strong>Descoberta</strong> (portos visitados) e
+     <strong>Amizades</strong>, e um destes títulos: Mercador Mais Rico do Reino, Grande Explorador, Embaixador dos Sete Mares,
+     Lenda dos Descobrimentos, Corsário do Rei... ou "Regressou com Histórias para Contar".</p>
+  <p><a class="botao" href="/jogo">Começar a aventura</a></p>
+</article>
+
+<!--@ carta -->
+<article class="carta">
+  <p class="carta-data">Lisboa, $data</p>
+  <p class="carta-saudacao">A $nome, mercador do Reino,</p>
+  <p>Nós, el-Rei D. Manuel, pela graça de Deus Rei de Portugal e dos Algarves, d'aquém e d'além-mar em África,
+     senhor da Guiné e da conquista, navegação e comércio da Etiópia, Arábia, Pérsia e Índia, vos fazemos saber:</p>
+  <p>Entregamos-vos uma caravela, com $capacidade caixas de porão, e $texto_inicial.</p>
+  <p class="destaque"><strong>Tendes 2 anos para voltardes a Lisboa e mostrardes o resultado de todo o vosso trabalho de bom mercador.</strong>
+     Segundo o que trouxerdes, assim serão as honras que vos daremos.</p>
+  <div class="carta-recursos">
+    <p><strong>Levais convosco:</strong></p>
+    <ul class="caixas"><li class="caixa-moedas">🪙 <strong>$dinheiro</strong> cruzados</li>$carga</ul>
+  </div>
+  <p class="carta-assinatura">El-Rei</p>
+  <!-- Selo de lacre (desenho SVG) -->
+  <svg class="selo" viewBox="0 0 100 100" aria-hidden="true">
+    <path d="M50 4 Q64 10 74 8 Q80 20 92 26 Q88 40 96 50 Q88 60 92 74 Q80 80 74 92 Q62 88 50 96 Q38 88 26 92 Q20 80 8 74 Q12 60 4 50 Q12 40 8 26 Q20 20 26 8 Q36 10 50 4 Z" fill="#a4262c" stroke="#6e1418" stroke-width="2"/>
+    <circle cx="50" cy="50" r="28" fill="none" stroke="#e7a3a0" stroke-width="2"/>
+    <path d="M38 44 L42 30 L50 40 L58 30 L62 44 Z" fill="#e7a3a0"/><path d="M38 56 h24 M50 48 v20" stroke="#e7a3a0" stroke-width="3"/>
+  </svg>
+  <form method="post" action="/zarpar"><button type="submit" class="botao grande">⚓ Ir para o porto de Lisboa</button></form>
+</article>
+
+<!--@ carga_item -->
+<li><span aria-hidden="true">$icone</span> $nome <strong>$qtd</strong>$nota</li>
+
+<!--@ nota_carga -->
+<small class="custo-carga">(pagaste $custo/caixa)</small>
+
+<!--@ carga_vazia -->
+<li class="vazio">O porão está vazio</li>
+
+<!--@ encomendas -->
+<div class="painel-encomendas"><strong>📜 Encomendas:</strong> <ul>$itens</ul></div>
+
+<!--@ encomenda_item -->
+<li>$icone $qtd caixas de $produto para $nome ($porto)</li>
+
+<!--@ painel -->
+<section class="painel" aria-label="O teu navio">
+  <div class="painel-item"><span class="painel-icone" aria-hidden="true">📅</span><span><small>Data</small><strong>$data</strong></span></div>
+  <div class="painel-item"><span class="painel-icone" aria-hidden="true">⏳</span><span><small>Faltam</small><strong>$dias dias</strong></span>
+    <span class="barra" aria-hidden="true"><span class="barra-tempo" style="width:$tempo%"></span></span></div>
+  <div class="painel-item"><span class="painel-icone" aria-hidden="true">🪙</span><span><small>Dinheiro</small><strong>$dinheiro cruzados</strong></span></div>
+  <details class="painel-item porao">
+    <summary><span class="painel-icone" aria-hidden="true">📦</span><span><small>Porão</small><strong>$carga / $capacidade caixas</strong></span>
+      <span class="barra" aria-hidden="true"><span class="barra-carga" style="width:$ocupado%"></span></span></summary>
+    <ul class="caixas">$lista_carga</ul>
+  </details>
+  <div class="painel-item navio-$classe_navio"><span class="painel-icone" aria-hidden="true">⛵</span><span><small>Navio</small><strong>$navio%</strong></span>
+    <span class="barra" aria-hidden="true"><span class="barra-navio" style="width:$navio%"></span></span></div>
+  $encomendas
+</section>
+
+<!--@ diario_item -->
+<li><span class="diario-data">$data</span> $texto</li>
+
+<!--@ mensagem -->
+<p class="mensagem" role="status">$texto</p>
+
+<!--@ porto -->
+$painel
+<section class="porto">
+  <div class="titulo-porto">
+    <h1>$nome</h1>
+    <p>$regiao</p>
+  </div>
+  $mensagem
+  <!-- A cena do porto: os mercadores, o navio (e, em Lisboa, o Paço Real) são clicáveis -->
+  <div class="cena">$cena</div>
+  <p class="dica-cena">👆 Clica num mercador para negociar, ou no teu navio para voltar a navegar.</p>
+  <div class="porto-baixo">
+    <nav class="mercadores" aria-label="Mercadores deste porto">
+      $mercadores
+      <a class="chip chip-navio" href="/mapa">⚓ Voltar a navegar</a>
+      $rei
+    </nav>
+    <div class="estaleiro pergaminho">$reparar</div>
+    <details class="diario pergaminho">
+      <summary>📖 Diário de bordo</summary>
+      <ul>$diario</ul>
+    </details>
+  </div>
+</section>
+
+<!--@ chip_mercador -->
+<a class="chip $amigo" href="/falar?m=$id"><span class="chip-nome"><span>$nome</span><small>$profissao</small></span> <span class="coracoes" aria-label="amizade">$coracoes</span> $estado</a>
+
+<!--@ chip_zangado -->
+<span class="selo-chip zangado" title="Está zangado contigo">💢</span>
+
+<!--@ chip_encomenda -->
+<span class="selo-chip" title="Tem uma encomenda para ti">📜</span>
+
+<!--@ reparar -->
+<form method="post" action="/reparar" class="form-reparar">
+  <span>🔨 <strong>Estaleiro</strong>: o navio está a $navio%. Reparar custa até $custo cruzados ($dias dias).</span>
+  <button type="submit" class="botao pequeno">Reparar o navio</button>
+</form>
+
+<!--@ reparar_ok -->
+<p>🔨 <strong>Estaleiro</strong>: o teu navio está em perfeito estado.</p>
+
+<!--@ botao_rei -->
+<a class="chip chip-rei" href="/rei">👑 Ir ao Paço Real</a>
+
+<!--@ conversa -->
+$painel
+<section class="conversa">
+  <aside class="mercador-cartao pergaminho">
+    <div class="retrato humor-$humor">$retrato</div>
+    <h1>$nome</h1>
+    <p class="profissao">$profissao</p>
+    <p class="historia">“$historia”</p>
+    <dl class="ficha">
+      <div><dt>Terra</dt><dd>$terra</dd></div>
+      <div><dt>Idade</dt><dd>$idade anos</dd></div>
+      <div><dt>Personalidade</dt><dd>$personalidade</dd></div>
+      <div><dt>Amizade</dt><dd>$coracoes</dd></div>
+      <div><dt>Paciência</dt><dd>$paciencia</dd></div>
+    </dl>
+    <form method="post" action="/sair"><button type="submit" class="botao secundario">← Voltar ao cais de $porto</button></form>
+  </aside>
+  <div class="conversa-direita">
+    <div class="balao" role="status"><p>$fala</p>$extra</div>
+    $mensagem
+    $corpo
+  </div>
+</section>
+
+<!--@ fala_extra -->
+<p class="balao-extra">$texto</p>
+
+<!--@ conversa_fechada -->
+<div class="pergaminho fechada">
+  <p>$nome não quer falar mais contigo hoje. Volta numa próxima visita a este porto... e regateia menos!</p>
+</div>
+
+<!--@ conversa_negocio -->
+$contra
+$entrega
+<section class="negocio pergaminho">
+  <h2>🪙 O que $nome te compra</h2>
+  <p class="explica">⭐ = produto que ele procura (paga melhor). Os preços são por caixa.</p>
+  <div class="produtos">$compra</div>
+</section>
+<section class="negocio pergaminho">
+  <h2>📦 O que $nome te vende</h2>
+  <div class="produtos">$venda</div>
+</section>
+
+<!--@ linha_produto -->
+<div class="produto">
+  <div class="produto-info">
+    <span class="produto-icone" aria-hidden="true">$icone</span>
+    <span><strong>$nome</strong> $etiqueta<br><small>$preco cruzados · $info</small>$nota</span>
+  </div>
+  $acoes
+</div>
+
+<!--@ nota_lucro -->
+<small class="nota-custo lucro">Pagaste $custo por caixa: ao preço dele ganhas $valor por caixa ✅</small>
+
+<!--@ nota_prejuizo -->
+<small class="nota-custo prejuizo">Pagaste $custo por caixa: ao preço dele perdes $valor por caixa ⚠️</small>
+
+<!--@ nota_empate -->
+<small class="nota-custo">Pagaste $custo por caixa: ao preço dele não ganhas nem perdes</small>
+
+<!--@ nota_oferta -->
+<small class="nota-custo">Não pagaste nada por estas caixas (do Rei ou achadas no mar)</small>
+
+<!--@ etiqueta_procura -->
+<span class="etiqueta-produto procura">⭐ procura</span>
+
+<!--@ etiqueta_outro -->
+<span class="etiqueta-produto">não procura</span>
+
+<!--@ etiqueta_falso -->
+<span class="etiqueta-produto falso">⚠️ parece falsa!</span>
+
+<!--@ etiqueta_bom -->
+<span class="etiqueta-produto bom">✔ parece boa</span>
+
+<!--@ botao_examinar -->
+<form method="post" action="/examinar" class="form-examinar">
+  <input type="hidden" name="produto" value="$produto">
+  <button type="submit" class="botao-texto">🔍 Examinar (1 dia)</button>
+</form>
+
+<!--@ acoes_vender -->
+<form method="post" action="/negociar" class="acoes">
+  <input type="hidden" name="acao" value="vender">
+  <input type="hidden" name="produto" value="$produto">
+  <label>Caixas <input type="number" name="qtd" min="1" max="$max" value="$max"></label>
+  <button type="submit" name="nivel" value="0" class="preco p0">Aceitar <strong>$p0</strong></button>
+  <button type="submit" name="nivel" value="1" class="preco p1">Pedir <strong>$p1</strong></button>
+  <button type="submit" name="nivel" value="2" class="preco p2">Pedir <strong>$p2</strong></button>
+</form>
+
+<!--@ acoes_comprar -->
+<form method="post" action="/negociar" class="acoes">
+  <input type="hidden" name="acao" value="comprar">
+  <input type="hidden" name="produto" value="$produto">
+  <label>Caixas <input type="number" name="qtd" min="1" max="$max" value="$sugerido"></label>
+  <button type="submit" name="nivel" value="0" class="preco p0">Pagar <strong>$p0</strong></button>
+  <button type="submit" name="nivel" value="1" class="preco p1">Oferecer <strong>$p1</strong></button>
+  <button type="submit" name="nivel" value="2" class="preco p2">Oferecer <strong>$p2</strong></button>
+</form>
+
+<!--@ sem_produto -->
+<p class="sem">Não tens no porão</p>
+
+<!--@ sem_compra -->
+<p class="sem">$motivo</p>
+
+<!--@ contraproposta -->
+<div class="contraproposta pergaminho">
+  <p><strong>Contraproposta:</strong> $texto</p>
+  <form method="post" action="/contraproposta" class="botoes-linha">
+    <button type="submit" name="resposta" value="sim" class="botao">🤝 Aceitar</button>
+    <button type="submit" name="resposta" value="nao" class="botao secundario">✋ Recusar</button>
+  </form>
+</div>
+
+<!--@ encomenda_conversa -->
+<div class="encomenda pergaminho">
+  <p>📜 <strong>Encomenda:</strong> $icone $qtd caixas de $produto, pagas a dobrar.</p>
+  $botao
+</div>
+
+<!--@ botao_entregar -->
+<form method="post" action="/entregar"><button type="submit" class="botao">Entregar a encomenda (+$valor cruzados)</button></form>
+
+<!--@ falta_encomenda -->
+<p class="sem">Ainda não tens caixas suficientes (verdadeiras!) no porão.</p>
+
+<!--@ mapa -->
+$painel
+<section class="mapa-ecra">
+  <div class="mapa-cabecalho">
+    <h1>🧭 Para onde vamos?</h1>
+    <a class="botao secundario" href="/jogo">← Ficar em $porto</a>
+  </div>
+  <div class="mapa-grelha">
+    <div class="mapa-moldura">$mapa</div>
+    <aside class="mapa-info pergaminho" id="info">$info</aside>
+  </div>
+</section>
+
+<!--@ mapa_info -->
+<h2>$nome</h2>
+<p class="regiao">$regiao · <em>$visitado</em></p>
+<p>$texto</p>
+<dl class="ficha">
+  <div><dt>Viagem</dt><dd>$dias dias</dd></div>
+  <div><dt>Chegada</dt><dd>$chegada</dd></div>
+  <div><dt>Barato</dt><dd>$produz</dd></div>
+  <div><dt>Caro</dt><dd>$procura</dd></div>
+</dl>
+$aviso
+<form method="post" action="/navegar">
+  <input type="hidden" name="destino" value="$destino">
+  <button type="submit" class="botao grande">⛵ Içar velas para $nome</button>
+</form>
+
+<!--@ mapa_info_vazio -->
+<h2>Escolhe um porto</h2>
+<p>Clica num porto do mapa para veres quantos dias demora a viagem e quando chegas.</p>
+<p class="pequeno">Os portos com bandeira vermelha já os visitaste. A linha vermelha é a rota que já fizeste.</p>
+<p class="pequeno">Não te esqueças: tens de estar em <strong>Lisboa</strong> antes do fim do prazo!</p>
+
+<!--@ aviso_mapa -->
+<p class="aviso">⚠️ $texto</p>
+
+<!--@ viagem -->
+$painel
+<section class="viagem">
+  <div class="viagem-cena">$cena</div>
+  <p class="viagem-rota">$origem ➜ $destino · $dias dias de mar</p>
+  <div class="viagem-cartao pergaminho">$bloco</div>
+</section>
+
+<!--@ evento -->
+<p class="evento-icone" aria-hidden="true">$icone</p>
+<h1>$titulo</h1>
+<p>$texto</p>
+<form method="post" action="/evento" class="escolhas">$escolhas</form>
+
+<!--@ escolha_evento -->
+<button type="submit" name="escolha" value="$indice" class="botao escolha">$texto</button>
+
+<!--@ resultado_viagem -->
+<p class="evento-icone" aria-hidden="true">$icone</p>
+<h1>$titulo</h1>
+<p>$texto</p>
+<p class="pequeno">Chegada prevista a $destino: <strong>$chegada</strong> ($dias dias de viagem).</p>
+<form method="post" action="/desembarcar"><button type="submit" class="botao grande">⚓ Desembarcar em $destino</button></form>
+
+<!--@ rei_confirmar -->
+$painel
+<article class="pergaminho texto-longo centro">
+  <p class="evento-icone" aria-hidden="true">👑</p>
+  <h1>Apresentar-se ao Rei?</h1>
+  <p>Hoje é $data. Ainda faltam <strong>$dias dias</strong> para o fim do prazo.</p>
+  <p>Se entrares agora no Paço Real, a tua viagem acaba e o Rei avalia o teu trabalho com o que tens neste momento.</p>
+  <form method="post" action="/rei" class="botoes-linha">
+    <button type="submit" class="botao grande">👑 Sim, quero ver o Rei</button>
+    <a class="botao secundario" href="/jogo">Ainda não, voltar ao porto</a>
+  </form>
+</article>
+
+<!--@ fim -->
+<section class="fim">
+  <div class="fim-cena">$cena</div>
+  <div class="fim-titulo pergaminho">
+    <p class="ano">Paço Real, $data</p>
+    <p>El-Rei D. Manuel I recebe $nome e concede-lhe o título de</p>
+    <h1>$titulo</h1>
+    <p class="frase-final">$frase</p>
+    $aviso
+    <div class="medalhas">$medalhas</div>
+    <p class="pontos">Pontuação: <strong>$pontos</strong> · $viagens viagens</p>
+    <form method="post" action="/novo"><button type="submit" class="botao grande">⛵ Nova viagem</button></form>
+  </div>
+  <div class="fim-grelha">
+    <div class="mapa-moldura"><h2>A tua rota</h2>$mapa</div>
+    <div class="diario pergaminho aberto">
+      <h2>📖 Diário de bordo</h2>
+      <ul>$diario</ul>
+    </div>
+  </div>
+</section>
+
+<!--@ medalha -->
+<div class="medalha $classe">
+  <span class="medalha-disco" aria-hidden="true">$icone</span>
+  <strong>$nome</strong>
+  <span>$nivel</span>
+  <small>$valor</small>
+</div>
+
+<!--@ aviso_fim -->
+<p class="aviso">⚠️ $texto</p>
+
+<!--@ derrota -->
+<section class="viagem derrota">
+  <div class="viagem-cena">$cena</div>
+  <div class="viagem-cartao pergaminho">
+    <p class="evento-icone" aria-hidden="true">⚓</p>
+    <h1>$titulo</h1>
+    <p>$texto</p>
+    <form method="post" action="/novo"><button type="submit" class="botao grande">⛵ Tentar outra vez</button></form>
+    <details class="diario">
+      <summary>📖 Diário de bordo de $nome</summary>
+      <ul>$diario</ul>
+    </details>
+  </div>
+</section>

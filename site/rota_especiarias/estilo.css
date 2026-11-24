@@ -1,0 +1,372 @@
+/* =====================================================================
+   estilo.css - TODO o CSS do jogo "Rota das Especiarias"
+   Estilo de mapa antigo dos Descobrimentos: pergaminho, tinta, madeira e mar turquesa.
+   Índice: 1 Variáveis | 2 Base | 3 Cabeçalho | 4 Pergaminho e botões | 5 Ecrã inicial e carta
+           6 Painel do navio | 7 Porto | 8 Conversa | 9 Mapa | 10 Viagem | 11 Fim
+           12 Animações | 13 Responsivo
+   ===================================================================== */
+
+/* ===== 1. VARIÁVEIS ===== */
+:root {
+  --mar-escuro: #123c43;
+  --mar: #1f6f78;
+  --turquesa: #2fa3a6;
+  --pergaminho: #f6e8c8;
+  --pergaminho-2: #ecd6a8;
+  --tinta: #3b2a1a;            /* texto principal (contraste alto no pergaminho) */
+  --tinta-suave: #6a4d33;
+  --lacre: #a4262c;            /* vermelho do selo do Rei */
+  --ouro: #c8962e;
+  --ouro-claro: #f2d27a;
+  --madeira: #5e3b1f;
+  --verde: #2f7a3d;
+  --raio: 14px;
+  --sombra: 0 10px 30px rgba(10, 30, 35, .35);
+  --letra-titulo: "Palatino Linotype", "Book Antiqua", Palatino, "URW Palladio L", Georgia, serif;
+  --letra: Georgia, "Times New Roman", serif;
+  color-scheme: light;
+}
+
+/* ===== 2. BASE ===== */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--letra);
+  color: var(--tinta);
+  line-height: 1.5;
+  /* fundo: mar escuro com um brilho, como a água de um porto ao fim da tarde */
+  background: radial-gradient(ellipse at 50% 0%, #2d8a92 0%, var(--mar) 35%, var(--mar-escuro) 100%);
+  background-color: var(--mar-escuro);
+}
+h1, h2, h3 { font-family: var(--letra-titulo); line-height: 1.15; margin: 0 0 .5rem; }
+p { margin: 0 0 .7rem; }
+a { color: var(--lacre); }
+:focus-visible { outline: 3px solid var(--ouro-claro); outline-offset: 3px; }
+.salto { position: absolute; left: -999px; background: var(--ouro-claro); color: var(--tinta); padding: .5rem 1rem; z-index: 10; }
+.salto:focus { left: 0; }
+.principal { width: 100%; max-width: 1180px; margin: 0 auto; padding: 1rem 1rem 2rem; flex: 1; }
+.pequeno { font-size: .9rem; color: var(--tinta-suave); }
+.centro { text-align: center; }
+
+/* ===== 3. CABEÇALHO ===== */
+.topo {
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  padding: .6rem 1.2rem;
+  background: linear-gradient(#6e4726, var(--madeira));
+  border-bottom: 3px solid #3d2612;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, .3);
+}
+.marca { color: var(--ouro-claro); font-family: var(--letra-titulo); font-size: 1.3rem; font-weight: 700; text-decoration: none; letter-spacing: .02em; }
+.topo nav a { color: var(--pergaminho); text-decoration: none; font-weight: 700; padding: .3rem .8rem; border: 1px solid rgba(246, 232, 200, .4); border-radius: 999px; }
+.topo nav a:hover { background: rgba(246, 232, 200, .15); }
+.rodape { text-align: center; color: #cfe5e3; font-size: .85rem; padding: 1rem 1rem 4.5rem; }   /* espaço em baixo para o leitor da música */
+
+/* ===== 4. PERGAMINHO E BOTÕES ===== */
+.pergaminho {
+  background: radial-gradient(ellipse at 30% 20%, #fbf1d9 0%, var(--pergaminho) 50%, var(--pergaminho-2) 100%);
+  border: 1px solid #c9a86a;
+  border-radius: var(--raio);
+  box-shadow: var(--sombra), inset 0 0 30px rgba(140, 100, 40, .25);
+  padding: 1.2rem;
+}
+.texto-longo { max-width: 780px; margin: 0 auto; }
+.texto-longo h2 { margin-top: 1.2rem; color: var(--lacre); }
+.texto-longo ul { padding-left: 1.2rem; }
+.texto-longo li { margin-bottom: .4rem; }
+.botao {
+  display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+  font: inherit; font-weight: 700; cursor: pointer; text-decoration: none;
+  color: #fff8e6; background: linear-gradient(#b8323a, var(--lacre));
+  border: 2px solid #6e1418; border-radius: 10px; padding: .6rem 1.1rem;
+  box-shadow: 0 3px 0 #6e1418;
+  transition: transform .15s ease, filter .15s ease;
+}
+.botao:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.botao:active { transform: translateY(2px); box-shadow: none; }
+.botao.grande { font-size: 1.1rem; padding: .8rem 1.4rem; }
+.botao.pequeno { padding: .4rem .8rem; font-size: .9rem; }
+.botao.secundario { background: #fff8e6; color: var(--tinta); border-color: var(--tinta-suave); box-shadow: 0 3px 0 var(--tinta-suave); }
+.botao-texto { background: none; border: 0; font: inherit; font-size: .85rem; color: var(--mar); text-decoration: underline; cursor: pointer; padding: .2rem 0; }
+.botoes-linha { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+.mensagem { background: #fff8e6; border: 2px solid var(--ouro); border-radius: 10px; padding: .6rem .9rem; font-weight: 700; box-shadow: var(--sombra); }
+.aviso { background: #ffe9e4; border: 2px solid var(--lacre); color: #7a1418; border-radius: 10px; padding: .6rem .8rem; font-weight: 700; }
+
+/* ===== 5. ECRÃ INICIAL E CARTA DO REI ===== */
+.hero { position: relative; }
+.hero-cena svg { display: block; width: 100%; height: auto; border-radius: var(--raio); border: 4px solid #3d2612; box-shadow: var(--sombra); }
+.hero-texto { max-width: 640px; margin: -120px auto 0; position: relative; text-align: center; }
+.hero-texto h1 { font-size: clamp(2.2rem, 6vw, 3.4rem); color: var(--lacre); text-shadow: 1px 1px 0 #fff4d6; }
+.ano { font-style: italic; color: var(--tinta-suave); margin-bottom: .2rem; }
+.form-nome label { display: block; font-weight: 700; margin-bottom: .4rem; }
+.linha-form { display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; }
+.linha-form input { font: inherit; padding: .6rem .8rem; border: 2px solid var(--tinta-suave); border-radius: 10px; background: #fffaf0; color: var(--tinta); min-width: 0; flex: 1 1 200px; max-width: 260px; }
+
+.carta {
+  position: relative; max-width: 720px; margin: 1rem auto;
+  padding: 2.4rem 2.6rem 2rem;
+  background: radial-gradient(ellipse at 20% 10%, #fff6de 0%, #f3e0b6 60%, #e6c88e 100%);
+  border-radius: 6px;
+  box-shadow: var(--sombra), inset 0 0 60px rgba(140, 90, 30, .35);
+  font-size: 1.08rem;
+  animation: desenrolar .8s ease;
+}
+.carta-data { text-align: right; font-style: italic; }
+.carta-saudacao { font-family: var(--letra-titulo); font-size: 1.3rem; font-weight: 700; }
+.carta p:first-of-type::first-letter { font-size: 1.1em; }
+.destaque { background: rgba(164, 38, 44, .08); border-left: 4px solid var(--lacre); padding: .5rem .8rem; }
+.carta-assinatura { font-family: var(--letra-titulo); font-style: italic; font-size: 1.5rem; text-align: right; margin-right: 110px; }
+.selo { position: absolute; right: 30px; bottom: 70px; width: 96px; transform: rotate(-12deg); filter: drop-shadow(2px 3px 2px rgba(0, 0, 0, .35)); }
+.carta form { margin-top: 1rem; }
+.caixas { list-style: none; padding: 0; margin: .3rem 0; display: flex; flex-wrap: wrap; gap: .4rem; }
+.caixas li { background: #e9c98d; border: 2px solid #9a6b3b; border-radius: 6px; padding: .2rem .55rem; font-size: .95rem; }
+.caixas li.vazio { background: none; border-style: dashed; color: var(--tinta-suave); }
+.caixa-moedas { background: var(--ouro-claro) !important; }
+
+/* ===== 6. PAINEL DO NAVIO ===== */
+.painel {
+  display: flex; flex-wrap: wrap; gap: .5rem; align-items: stretch;
+  background: linear-gradient(#6e4726, var(--madeira)); border: 2px solid #3d2612; border-radius: var(--raio);
+  padding: .5rem; margin-bottom: 1rem; box-shadow: var(--sombra);
+}
+.painel-item {
+  flex: 1 1 150px; display: flex; flex-wrap: wrap; align-items: center; gap: .1rem .5rem;
+  background: var(--pergaminho); border-radius: 10px; padding: .35rem .6rem; min-width: 0;
+}
+.painel-item small { display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--tinta-suave); }
+.painel-item strong { font-size: .95rem; }
+.painel-icone { font-size: 1.4rem; }
+.barra { flex: 1 0 100%; height: 6px; background: #d9c08e; border-radius: 3px; overflow: hidden; }
+.barra > span { display: block; height: 100%; }
+.barra-tempo { background: var(--lacre); }
+.barra-carga { background: var(--ouro); }
+.barra-navio { background: var(--verde); }
+.navio-medio .barra-navio { background: var(--ouro); }
+.navio-mau .barra-navio { background: var(--lacre); }
+.navio-mau { animation: alerta 1.6s ease-in-out infinite; }
+.porao summary { display: flex; flex-wrap: wrap; align-items: center; gap: .1rem .5rem; cursor: pointer; list-style: none; width: 100%; }
+.porao summary::-webkit-details-marker { display: none; }
+.porao summary::after { content: "▾ ver"; font-size: .75rem; color: var(--tinta-suave); margin-left: auto; }
+.porao[open] summary::after { content: "▴"; }
+.painel-encomendas { flex: 1 1 100%; background: var(--pergaminho); border-radius: 10px; padding: .35rem .7rem; font-size: .9rem; }
+.painel-encomendas ul { display: inline; padding: 0; margin: 0; list-style: none; }
+.painel-encomendas li { display: inline; }
+.painel-encomendas li + li::before { content: " · "; }
+
+/* ===== 7. PORTO ===== */
+.titulo-porto { display: flex; align-items: baseline; gap: .8rem; flex-wrap: wrap; color: var(--pergaminho); }
+.titulo-porto h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); margin: 0; text-shadow: 2px 2px 0 rgba(0, 0, 0, .3); }
+.titulo-porto p { margin: 0; font-style: italic; color: #cfe5e3; }
+.porto .mensagem { margin: .6rem 0; }
+.cena { margin-top: .6rem; border: 5px solid #3d2612; border-radius: var(--raio); overflow: hidden; box-shadow: var(--sombra); background: #3d2612; }
+.cena svg, .viagem-cena svg, .fim-cena svg { display: block; width: 100%; height: auto; }
+.dica-cena { color: #e2f1ef; text-align: center; margin: .5rem 0; font-size: .95rem; }
+/* tudo o que é clicável no desenho brilha quando o rato passa por cima */
+.alvo { cursor: pointer; }
+.alvo .etiqueta { transition: fill .2s ease; }
+.alvo:hover, .alvo:focus-visible { filter: drop-shadow(0 0 6px #ffe08a) drop-shadow(0 0 2px #ffe08a); outline: none; }
+.alvo:hover .etiqueta, .alvo:focus-visible .etiqueta { fill: var(--ouro-claro); }
+.porto-baixo { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin-top: .4rem; }
+.mercadores { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; }
+.chip {
+  display: inline-flex; align-items: center; gap: .4rem; text-decoration: none; color: var(--tinta);
+  background: var(--pergaminho); border: 2px solid #9a6b3b; border-radius: 999px; padding: .35rem .8rem; font-weight: 700;
+  transition: transform .15s ease;
+}
+.chip:hover { transform: translateY(-2px); background: #fff4d6; }
+.chip.amigo { border-color: var(--verde); }
+.chip-navio { background: var(--turquesa); color: #062a2e; border-color: #0f5a5e; }
+.chip-rei { background: var(--ouro-claro); border-color: var(--ouro); }
+.coracoes { font-size: .75rem; letter-spacing: -.1em; }
+.selo-chip { font-size: 1rem; }
+.estaleiro { padding: .8rem 1rem; }
+.estaleiro p { margin: 0; }
+.form-reparar { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; justify-content: space-between; }
+.diario { padding: .8rem 1rem; }
+.diario summary { cursor: pointer; font-weight: 700; font-family: var(--letra-titulo); font-size: 1.05rem; }
+.diario ul { list-style: none; padding: 0; margin: .6rem 0 0; display: grid; gap: .4rem; max-height: 340px; overflow: auto; }
+.diario li { border-bottom: 1px dashed #c9a86a; padding-bottom: .3rem; font-size: .92rem; }
+.diario-data { display: block; font-size: .78rem; font-style: italic; color: var(--tinta-suave); }
+
+/* ===== 8. CONVERSA ===== */
+.conversa { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 1rem; align-items: start; }
+.mercador-cartao { position: sticky; top: 1rem; text-align: center; }
+.retrato { border: 4px solid #3d2612; border-radius: 12px; overflow: hidden; background: #3d2612; margin-bottom: .6rem; }
+.retrato svg { display: block; width: 100%; height: auto; }
+.humor-zangado { animation: tremer .4s ease 2; }
+.humor-contente { animation: saltinho .5s ease; }
+.ficha { margin: 0 0 .8rem; display: grid; gap: .3rem; text-align: left; }
+.ficha div { display: flex; justify-content: space-between; gap: .6rem; border-bottom: 1px dashed #c9a86a; padding-bottom: .2rem; }
+.ficha dt { font-weight: 700; color: var(--tinta-suave); }
+.ficha dd { margin: 0; text-align: right; }
+.balao {
+  position: relative; background: #fffaf0; border: 3px solid var(--tinta); border-radius: 18px;
+  padding: 1rem 1.2rem; font-size: 1.1rem; box-shadow: var(--sombra); margin-bottom: 1rem;
+  animation: aparecer .35s ease;
+}
+.balao::before { content: ""; position: absolute; left: -18px; top: 26px; border: 10px solid transparent; border-right: 16px solid var(--tinta); }
+.balao p { margin: 0; }
+.balao .balao-extra { margin-top: .6rem; padding-top: .6rem; border-top: 1px dashed #c9a86a; font-style: italic; color: var(--mar-escuro); }
+.negocio { margin-bottom: 1rem; }
+.negocio h2 { font-size: 1.2rem; }
+.explica { font-size: .88rem; color: var(--tinta-suave); }
+.produtos { display: grid; gap: .5rem; }
+.produto {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem;
+  background: rgba(255, 250, 238, .75); border: 1px solid #d6b77c; border-radius: 10px; padding: .5rem .7rem;
+}
+.produto-info { display: flex; align-items: center; gap: .6rem; min-width: 0; }
+.produto-icone { font-size: 1.8rem; width: 2.4rem; height: 2.4rem; display: grid; place-items: center; background: #e9c98d; border: 2px solid #9a6b3b; border-radius: 6px; flex: none; }
+.etiqueta-produto { font-size: .72rem; font-weight: 700; padding: .05rem .4rem; border-radius: 999px; background: #e6dcc6; color: var(--tinta-suave); white-space: nowrap; }
+.etiqueta-produto.procura { background: var(--ouro-claro); color: #5a3c00; }
+.etiqueta-produto.falso { background: #ffd6d0; color: #7a1418; }
+.etiqueta-produto.bom { background: #d6efd9; color: #1d5a2a; }
+.form-examinar { display: inline; }
+.acoes { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; }
+.acoes label { font-size: .82rem; display: flex; align-items: center; gap: .3rem; }
+.acoes input { width: 4.2rem; font: inherit; padding: .3rem; border: 2px solid #9a6b3b; border-radius: 6px; background: #fffaf0; color: var(--tinta); }
+.preco { font: inherit; font-size: .85rem; cursor: pointer; border-radius: 8px; padding: .35rem .6rem; border: 2px solid; transition: transform .1s ease; }
+.preco:hover { transform: translateY(-1px); }
+.preco.p0 { background: #d6efd9; border-color: #2f7a3d; color: #1d4a24; }
+.preco.p1 { background: #fff1c2; border-color: #b8860b; color: #5a3c00; }
+.preco.p2 { background: #ffdcd5; border-color: #b8323a; color: #6e1418; }
+.sem { margin: 0; font-size: .85rem; font-style: italic; color: var(--tinta-suave); }
+.contraproposta, .encomenda { margin-bottom: 1rem; border: 2px solid var(--ouro); }
+.fechada { font-size: 1.05rem; }
+/* nota com o preço de compra (para saber se a venda dá lucro) */
+.nota-custo { display: block; margin-top: .2rem; font-size: .8rem; font-weight: 700; color: var(--tinta-suave); }
+.nota-custo.lucro { color: #1d5a2a; }
+.nota-custo.prejuizo { color: #a4262c; }
+.custo-carga { font-size: .78em; color: var(--tinta-suave); margin-left: .2rem; }
+/* pormenores do mercador */
+.profissao { font-style: italic; color: var(--lacre); font-weight: 700; margin: -.3rem 0 .4rem; }
+.historia { font-size: .92rem; font-style: italic; text-align: left; background: rgba(255, 250, 238, .7); border-left: 3px solid var(--ouro); padding: .4rem .6rem; border-radius: 6px; }
+.chip-nome { display: inline-flex; flex-direction: column; line-height: 1.1; text-align: left; }
+.chip-nome small { font-weight: 400; font-style: italic; font-size: .72rem; color: var(--tinta-suave); }
+
+/* ===== 9. MAPA ===== */
+.mapa-cabecalho { display: flex; justify-content: space-between; align-items: center; gap: .8rem; flex-wrap: wrap; margin-bottom: .6rem; }
+.mapa-cabecalho h1 { color: var(--pergaminho); margin: 0; }
+.mapa-grelha { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 1rem; align-items: start; }
+.mapa-moldura { border: 6px solid #3d2612; border-radius: 10px; overflow: auto; background: #cfe2d6; box-shadow: var(--sombra); }
+.mapa-moldura h2 { margin: .5rem .8rem 0; color: var(--tinta); }
+.mapa-svg { display: block; width: 100%; min-width: 680px; height: auto; }
+.mapa-info h2 { color: var(--lacre); }
+.regiao { color: var(--tinta-suave); }
+.mapa-info .botao { width: 100%; margin-top: .6rem; }
+/* portos e rotas no mapa */
+.mapa-svg .porto circle { fill: #fff8e6; stroke: var(--tinta); stroke-width: 2; transition: r .15s ease; }
+.mapa-svg .porto .nome-porto { fill: var(--tinta); font-family: var(--letra-titulo); font-weight: 700; paint-order: stroke; stroke: #f1e3c0; stroke-width: 3px; }
+.mapa-svg .porto.visitado circle { fill: var(--ouro-claro); }
+.mapa-svg .porto.secreto circle { fill: #b46cf0; }
+.mapa-svg .porto.atual circle { fill: var(--turquesa); }
+.mapa-svg .porto.escolhido circle { fill: var(--lacre); r: 9; }
+.mapa-svg a.porto:hover circle, .mapa-svg a.porto:focus-visible circle { r: 10; fill: var(--lacre); }
+.mapa-svg a.porto:hover .nome-porto { fill: var(--lacre); }
+.rota-feita { stroke: var(--lacre); stroke-width: 2.5; stroke-dasharray: 2 5; opacity: .75; }
+.rota-nova { stroke: #0f5a8e; stroke-width: 3.5; stroke-dasharray: 10 7; animation: tracejado 1s linear infinite; }
+.terra-nova { animation: aparecer 1.2s ease; }
+
+/* ===== 10. VIAGEM ===== */
+.viagem-cena { border: 5px solid #3d2612; border-radius: var(--raio); overflow: hidden; box-shadow: var(--sombra); }
+.viagem-rota { text-align: center; color: var(--pergaminho); font-family: var(--letra-titulo); font-size: 1.15rem; margin: .5rem 0; }
+.viagem-cartao { max-width: 680px; margin: -90px auto 0; position: relative; text-align: center; animation: aparecer .5s ease; }
+.evento-icone { font-size: 3rem; margin: 0; line-height: 1; }
+.escolhas { display: grid; gap: .5rem; margin-top: .8rem; }
+.escolha { width: 100%; text-align: left; justify-content: flex-start; }
+.derrota .diario { text-align: left; margin-top: 1rem; }
+
+/* ===== 11. FIM (cerimónia no palácio) ===== */
+.fim-cena { border: 5px solid #3d2612; border-radius: var(--raio); overflow: hidden; box-shadow: var(--sombra); }
+.fim-titulo { max-width: 760px; margin: -110px auto 1rem; position: relative; text-align: center; animation: aparecer .8s ease; }
+.fim-titulo h1 { font-size: clamp(1.8rem, 5vw, 2.8rem); color: var(--lacre); margin: .2rem 0 .6rem; }
+.frase-final { font-size: 1.08rem; }
+.medalhas { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; margin: 1rem 0; }
+.medalha { display: flex; flex-direction: column; align-items: center; gap: .1rem; }
+.medalha-disco {
+  width: 74px; height: 74px; border-radius: 50%; display: grid; place-items: center; font-size: 2rem;
+  border: 4px solid #8a8a8a; background: radial-gradient(circle at 35% 30%, #f0f0f0, #a9a9a9); box-shadow: 0 4px 8px rgba(0, 0, 0, .3);
+}
+.nivel-0 .medalha-disco { filter: grayscale(1); opacity: .5; }
+.nivel-1 .medalha-disco { background: radial-gradient(circle at 35% 30%, #f3c192, #b06a2c); border-color: #7a4416; }
+.nivel-2 .medalha-disco { background: radial-gradient(circle at 35% 30%, #ffffff, #b9bec4); border-color: #7d848c; }
+.nivel-3 .medalha-disco { background: radial-gradient(circle at 35% 30%, #fff3b0, #d4a017); border-color: #8a6400; animation: brilho 2s ease-in-out infinite; }
+.medalha small { font-size: .8rem; color: var(--tinta-suave); }
+.pontos { font-size: 1.1rem; }
+.fim-grelha { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 1rem; align-items: start; }
+.diario.aberto ul { max-height: 520px; }
+.fim .mapa-svg { min-width: 0; }   /* no fim, o mapa encolhe para caber todo */
+
+/* ===== 11b. MOLDURA E MÚSICA DE FUNDO =====
+   A moldura ocupa o ecrã todo com o jogo (iframe) e tem o leitor da música num canto. */
+.moldura { overflow: hidden; }
+.janela-jogo { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; }
+.musica {
+  position: fixed; right: 12px; bottom: 12px; z-index: 5;
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  background: linear-gradient(#6e4726, var(--madeira)); border: 2px solid #3d2612; border-radius: 14px;
+  padding: .35rem .6rem; box-shadow: var(--sombra); max-width: calc(100% - 24px);
+}
+.musica-titulo { color: var(--ouro-claro); font-weight: 700; font-size: .9rem; }
+.musica audio { height: 34px; max-width: 240px; }
+
+/* ===== 12. ANIMAÇÕES ===== */
+.ondas, .ondas-mar { animation: ondular 4s ease-in-out infinite; }
+.bandeira { transform-box: fill-box; transform-origin: left center; animation: bandeira 1.4s ease-in-out infinite; }
+.navio-viagem, .navio-pirata { animation: balancar 3s ease-in-out infinite; transform-box: fill-box; transform-origin: center bottom; }
+.navio-desenho { animation: boiar 4s ease-in-out infinite; }
+.barco-longe { animation: deslizar 40s linear infinite; }
+.chuva { animation: chover .5s linear infinite; }
+.relampago { animation: relampago 3s steps(1) infinite; }
+.golfinho { animation: golfinho 2.6s ease-in-out infinite; }
+.golfinho.g2 { animation-delay: 1.3s; }
+.serpente { animation: ondular 2s ease-in-out infinite; }
+.fumo-vulcao { animation: fumo 4s ease-in-out infinite; }
+.navio-mapa { animation: boiar 2.5s ease-in-out infinite; }
+@keyframes ondular { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(14px); } }
+@keyframes bandeira { 0%, 100% { transform: skewY(0); } 50% { transform: skewY(-8deg) scaleX(.9); } }
+@keyframes balancar { 0%, 100% { transform: rotate(-2deg) translateY(0); } 50% { transform: rotate(2deg) translateY(5px); } }
+@keyframes boiar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+@keyframes deslizar { from { transform: translateX(-60px); } to { transform: translateX(60px); } }
+@keyframes chover { from { transform: translate(0, 0); } to { transform: translate(-14px, 34px); } }
+@keyframes relampago { 0%, 100% { opacity: 0; } 5%, 9% { opacity: 1; } 7% { opacity: 0; } }
+@keyframes golfinho { 0%, 100% { transform: translateY(30px); opacity: 0; } 30%, 70% { opacity: 1; } 50% { transform: translateY(-20px); } }
+@keyframes fumo { 0%, 100% { opacity: .5; transform: translateY(0); } 50% { opacity: .9; transform: translateY(-8px); } }
+@keyframes tracejado { to { stroke-dashoffset: -17; } }
+@keyframes aparecer { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes desenrolar { from { opacity: 0; transform: scaleY(.6); } to { opacity: 1; transform: none; } }
+@keyframes tremer { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+@keyframes saltinho { 50% { transform: translateY(-6px); } }
+@keyframes alerta { 50% { box-shadow: 0 0 0 3px var(--lacre); } }
+@keyframes brilho { 50% { box-shadow: 0 0 18px 4px #ffe08a; } }
+/* quem prefere menos movimento não vê animações */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ===== 13. RESPONSIVO ===== */
+@media (max-width: 900px) {
+  .conversa { grid-template-columns: minmax(0, 1fr); }
+  .mercador-cartao { position: static; display: grid; grid-template-columns: 120px 1fr; gap: .2rem .8rem; text-align: left; align-items: center; }
+  .mercador-cartao .retrato { grid-row: span 5; margin: 0; }
+  .mercador-cartao h1 { font-size: 1.3rem; margin: 0; }
+  .mercador-cartao .ficha { margin: 0; }
+  .mercador-cartao form { grid-column: 1 / -1; }
+  .balao::before { display: none; }
+  .mapa-grelha, .fim-grelha, .porto-baixo { grid-template-columns: minmax(0, 1fr); }
+  .viagem-cartao, .fim-titulo { margin-top: .8rem; }
+  .hero-texto { margin-top: .8rem; }
+}
+@media (max-width: 520px) {
+  .principal { padding: .6rem .6rem 1.5rem; }
+  .carta { padding: 1.6rem 1.2rem 1.4rem; font-size: 1rem; }
+  .carta-assinatura { margin-right: 80px; }
+  .selo { width: 70px; right: 14px; bottom: 80px; }
+  .painel-item { flex: 1 1 45%; }
+  .painel-icone { font-size: 1.1rem; }
+  .medalhas { gap: .4rem; }
+  .medalha-disco { width: 58px; height: 58px; font-size: 1.6rem; }
+  .marca { font-size: 1.05rem; }
+}

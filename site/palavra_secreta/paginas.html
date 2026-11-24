@@ -1,0 +1,308 @@
+<!--
+  paginas.html - TODO o HTML do jogo "Palavra Secreta" num só ficheiro.
+
+  COMO FUNCIONA
+  - O ficheiro está dividido em BLOCOS. Cada bloco começa com um marcador especial
+    (arroba + nome do bloco, dentro de um comentário HTML). É assim que o Python
+    (palavra_secreta.py) os separa.
+  - Os campos escritos com cifrão (por exemplo, o nome do tema) são preenchidos pelo
+    Python com os dados do jogo.
+  - Há blocos que são PÁGINAS inteiras e blocos que são PEÇAS pequenas, que o Python
+    repete várias vezes (uma letra da grelha, uma tecla, uma pista...).
+
+  PÁGINAS                       PEÇAS
+    base        esqueleto         cartao_tema   botão de um tema (ecrã inicial)
+    inicio      escolher o tema   continuar     "continuar o jogo" (ecrã inicial)
+    como_jogar  regras            resumo        estatísticas curtas (ecrã inicial)
+    jogo        grelha e teclado  linha, celula linha da grelha e cada quadradinho
+    fim         resultado final   teclado_linha, tecla, tecla_tentar, tecla_apagar
+                                  pista, pista_botao, pista_esgotada
+                                  aviso, aviso_info, pontos
+                                  estatisticas, barra, tema_stat
+
+  DICA: se alterares este ficheiro, basta carregares em F5 no browser
+  (não é preciso reiniciar o servidor).
+-->
+
+<!--@ base -->
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Palavra Secreta: um Wordle em português, por temas. Descobre a palavra em 6 tentativas.">
+  <meta name="theme-color" content="#eaf8ff">
+  <title>$titulo</title>
+  <!-- Ícone do separador do browser (um emoji desenhado em SVG, não precisa de ficheiro) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔤%3C/text%3E%3C/svg%3E">
+  <!-- Folha de estilos (ficheiro estilo.css, na mesma pasta) -->
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<!-- A classe do body (tema-animais, tema-comida...) muda as cores da página toda -->
+<body class="$classe_tema">
+  <a class="salto" href="#conteudo">Saltar para o conteúdo</a>
+  <header class="topo">
+    <div class="topo-interior">
+      <a class="marca" href="/inicio">
+        <span class="marca-letras" aria-hidden="true"><span class="certa">P</span><span class="existe">S</span></span>
+        <span>Palavra Secreta</span>
+      </a>
+      <nav aria-label="Menu">
+        <a href="/inicio">Temas</a>
+        <a href="/como-jogar">Como jogar</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo" class="caixa">
+$conteudo
+  </main>
+
+  <footer class="rodape">
+    <p>Palavra Secreta · Projeto de Multimédia · feito só com Python, HTML e CSS</p>
+  </footer>
+</body>
+</html>
+
+<!--@ inicio -->
+<section class="hero">
+  <!-- O logótipo é feito com quadradinhos iguais aos do jogo -->
+  <div class="logo" aria-hidden="true">
+    <span class="celula certa">P</span><span class="celula existe">A</span><span class="celula falha">L</span><span class="celula certa">A</span><span class="celula certa">V</span><span class="celula existe">R</span><span class="celula certa">A</span>
+  </div>
+  <h1>Palavra Secreta</h1>
+  <p class="subtitulo">Escolhe um tema e descobre a palavra escondida em 6 tentativas.<br>
+     As cores das letras ajudam-te. Se precisares, há pistas!</p>
+</section>
+
+$continuar
+
+<section class="cartao" aria-labelledby="titulo-temas">
+  <h2 id="titulo-temas">Escolhe um tema</h2>
+  <form method="post" action="/tema" class="temas">
+$cartoes
+  </form>
+</section>
+
+$resumo
+
+<p class="ligacao-ajuda"><a href="/como-jogar">Nunca jogaste? Vê como se joga →</a></p>
+
+<!--@ cartao_tema -->
+<button class="tema-cartao cartao-$chave" type="submit" name="tema" value="$chave">
+  <span class="tema-icone" aria-hidden="true">$icone</span>
+  <span class="tema-nome">$nome</span>
+  <span class="tema-desc">$descricao</span>
+</button>
+
+<!--@ continuar -->
+<section class="cartao continuar">
+  <div>
+    <h2>Tens um jogo a meio</h2>
+    <p>$tema · $feitas</p>
+  </div>
+  <a class="botao" href="/">Continuar a jogar</a>
+</section>
+
+<!--@ resumo -->
+<section class="cartao resumo" aria-label="As tuas estatísticas">
+  <div><strong>$jogos</strong><span>jogos</span></div>
+  <div><strong>$vitorias</strong><span>vitórias</span></div>
+  <div><strong>$sequencia</strong><span>seguidas</span></div>
+  <div><strong>$pontos</strong><span>pontos</span></div>
+</section>
+
+<!--@ como_jogar -->
+<section class="cartao texto">
+  <h1>Como jogar</h1>
+  <ol class="regras">
+    <li><strong>Escolhe um tema</strong>: Animais, Comida, Desporto, Países, História ou Música
+        (ou "Surpresa", para o jogo escolher por ti).</li>
+    <li>O jogo sorteia uma <strong>palavra secreta</strong> desse tema, com $minimo a $maximo letras.
+        A grelha mostra quantas letras tem.</li>
+    <li>Tens <strong>$tentativas tentativas</strong>. Escreve uma palavra com o número certo de letras
+        e carrega em <strong>Tentar</strong> (ou na tecla Enter).</li>
+    <li>Depois de cada tentativa, as letras mudam de cor:</li>
+  </ol>
+
+  <div class="exemplo" aria-hidden="true">
+    <div class="linha tentada" style="--n:5">
+      <span class="celula certa">T</span><span class="celula falha">I</span><span class="celula falha">G</span><span class="celula existe">R</span><span class="celula existe">E</span>
+    </div>
+  </div>
+  <ul class="legenda">
+    <li><span class="celula mini certa">T</span><span><strong>Verde</strong>: a letra está certa e no sítio certo.</span></li>
+    <li><span class="celula mini existe">R</span><span><strong>Amarelo</strong>: a letra existe, mas noutro sítio.</span></li>
+    <li><span class="celula mini falha">G</span><span><strong>Cinzento</strong>: a letra não existe na palavra.</span></li>
+  </ul>
+
+  <h2>Mais regras</h2>
+  <ul class="regras">
+    <li><strong>Acentos:</strong> não precisas de os escrever. "MACA" conta como "MAÇÃ".
+        No fim, a palavra aparece bem escrita.</li>
+    <li><strong>Teclado:</strong> podes escrever na caixa de texto ou carregar nas teclas do ecrã.
+        As teclas também ficam coloridas, para saberes que letras já experimentaste.</li>
+    <li><strong>Tamanho errado?</strong> Aparece um aviso e não perdes a tentativa.</li>
+    <li><strong>💡 Pistas:</strong> cada palavra tem 2 pistas. Cada pista tira $custo pontos.</li>
+    <li><strong>Pontos:</strong> acertar à primeira vale 100 pontos; cada tentativa a mais vale menos.</li>
+    <li><strong>No fim</strong>, ganhes ou percas, aprendes uma curiosidade sobre a palavra.</li>
+  </ul>
+  <p><a class="botao" href="/inicio">Escolher um tema</a></p>
+</section>
+
+<!--@ jogo -->
+<div class="jogo-layout">
+  <!-- Coluna da esquerda: cenário do tema e pistas -->
+  <aside class="lateral">
+    <figure class="cenario">
+      $cenario
+      <figcaption>$nome_tema</figcaption>
+    </figure>
+    <section class="cartao pistas" id="pistas" aria-labelledby="titulo-pistas">
+      <h2 id="titulo-pistas">💡 Pistas</h2>
+      <ol class="lista-pistas">$pistas</ol>
+      $botao_pista
+    </section>
+  </aside>
+
+  <!-- Coluna da direita: grelha e teclado -->
+  <section class="cartao jogo" id="jogo" aria-labelledby="titulo-jogo">
+    <h1 id="titulo-jogo" class="sr">Palavra Secreta: $nome_tema</h1>
+    <ul class="info">
+      <li>Tentativa <strong>$numero</strong> de $tentativas</li>
+      <li><strong>$tamanho</strong> letras</li>
+      <li>Vale <strong>$pontos_possiveis</strong> pontos</li>
+    </ul>
+
+    $aviso
+
+    <div class="grelha" aria-label="Grelha das tentativas">
+$grelha
+    </div>
+
+    <!-- Um só formulário para a caixa de texto e para o teclado do ecrã.
+         Cada tecla é um botão: envia a letra (name="acao"), junto com o que já está escrito. -->
+    <form method="post" action="/jogada" class="escrever" autocomplete="off">
+      <!-- Botão escondido: é o que a tecla Enter "carrega" (o primeiro botão do formulário) -->
+      <button type="submit" name="acao" value="tentar" class="enviar-escondido" tabindex="-1" aria-hidden="true">Tentar</button>
+      <div class="linha-escrever">
+        <label class="sr" for="palavra">Escreve uma palavra com $tamanho letras</label>
+        <input id="palavra" name="palavra" value="$rascunho" maxlength="$tamanho" placeholder="Escreve aqui ($tamanho letras)"
+               autofocus autocapitalize="characters" spellcheck="false">
+        <button type="submit" name="acao" value="tentar" class="botao">Tentar</button>
+      </div>
+      <div class="teclado" aria-label="Teclado">
+$teclado
+      </div>
+    </form>
+
+    <form method="post" action="/desistir" class="desistir">
+      <button type="submit" class="botao-texto">Desistir e ver a palavra</button>
+    </form>
+  </section>
+</div>
+
+<!--@ linha -->
+<div class="linha $classe" style="--n:$tamanho" role="group" aria-label="$rotulo">$celulas</div>
+
+<!--@ celula -->
+<span class="celula $estado" style="--i:$i"><span class="sr">$rotulo</span><span aria-hidden="true">$letra</span></span>
+
+<!--@ teclado_linha -->
+<div class="teclado-linha">$teclas</div>
+
+<!--@ tecla -->
+<button type="submit" name="acao" value="letra:$letra" class="tecla $estado" aria-label="$rotulo">$letra</button>
+
+<!--@ tecla_tentar -->
+<button type="submit" name="acao" value="tentar" class="tecla larga">Tentar</button>
+
+<!--@ tecla_apagar -->
+<button type="submit" name="acao" value="apagar" class="tecla larga" aria-label="Apagar a última letra">⌫</button>
+
+<!--@ pista -->
+<li><span class="pista-numero">Pista $numero</span> $texto</li>
+
+<!--@ pista_botao -->
+<form method="post" action="/pista">
+  <button type="submit" class="botao pista-botao">💡 Pedir pista <small>(−$custo pontos · restam $restam)</small></button>
+</form>
+
+<!--@ pista_esgotada -->
+<p class="pista-fim">Já usaste as duas pistas. Agora é contigo! 💪</p>
+
+<!--@ aviso -->
+<p class="aviso" role="alert">$texto</p>
+
+<!--@ aviso_info -->
+<p class="aviso info" role="status">$texto</p>
+
+<!--@ fim -->
+<div class="jogo-layout">
+  <aside class="lateral">
+    <figure class="cenario $classe">
+      $cenario
+      <figcaption>$nome_tema</figcaption>
+    </figure>
+  </aside>
+
+  <div class="coluna-fim">
+    <section class="cartao resultado $classe" aria-labelledby="titulo-fim">
+      <h1 id="titulo-fim">$titulo</h1>
+      <p>$frase</p>
+      <div class="linha palavra-final" role="group" aria-label="A palavra secreta">$letras</div>
+      $resultado
+    </section>
+
+    <section class="cartao curiosidade" aria-labelledby="titulo-curiosidade">
+      <h2 id="titulo-curiosidade">🧠 Sabias que...?</h2>
+      <p>$curiosidade</p>
+    </section>
+
+    <div class="botoes-fim">
+      <form method="post" action="/tema">
+        <button type="submit" name="tema" value="$escolha" class="botao">🔁 Jogar outra vez (mesmo tema)</button>
+      </form>
+      <a class="botao secundario" href="/inicio">🗂️ Mudar de tema</a>
+    </div>
+
+    <details class="cartao as-tentativas">
+      <summary>Ver as tuas tentativas</summary>
+      <div class="grelha pequena">
+$grelha
+      </div>
+    </details>
+
+    $estatisticas
+  </div>
+</div>
+
+<!--@ pontos -->
+<p class="pontos"><span>+$pontos</span> pontos</p>
+
+<!--@ estatisticas -->
+<section class="cartao estatisticas" aria-labelledby="titulo-stats">
+  <h2 id="titulo-stats">📊 As tuas estatísticas</h2>
+  <div class="numeros">
+    <div><strong>$jogos</strong><span>jogos</span></div>
+    <div><strong>$percentagem%</strong><span>vitórias</span></div>
+    <div><strong>$sequencia</strong><span>seguidas</span></div>
+    <div><strong>$melhor</strong><span>melhor sequência</span></div>
+    <div><strong>$media</strong><span>tentativas (média)</span></div>
+    <div><strong>$pontos</strong><span>pontos</span></div>
+  </div>
+  <h3>Acertaste à...</h3>
+  <div class="barras">$barras</div>
+  <h3>Por tema</h3>
+  <table class="tabela-temas">
+    <thead><tr><th scope="col">Tema</th><th scope="col">Jogos</th><th scope="col">Vitórias</th><th scope="col">Média</th></tr></thead>
+    <tbody>$temas</tbody>
+  </table>
+  <p class="nota">As estatísticas duram enquanto o jogo estiver aberto no computador.</p>
+</section>
+
+<!--@ barra -->
+<div class="barra"><span class="barra-num">$numero.ª</span><span class="barra-fundo"><span class="barra-valor $classe" style="width:$largura%">$valor</span></span></div>
+
+<!--@ tema_stat -->
+<tr><th scope="row"><span aria-hidden="true">$icone</span> $nome</th><td>$jogos</td><td>$vitorias</td><td>$media</td></tr>
